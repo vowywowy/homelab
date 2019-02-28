@@ -48,6 +48,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "139:139"
+      - "145:145"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
