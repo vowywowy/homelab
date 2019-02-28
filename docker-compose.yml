@@ -50,13 +50,15 @@ services:
       - "443:443"
       - "139:139"
       - "145:145"
+      - "137-138:137-138/udp"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on: 
       - portainer
       - netdata
-      - qbittorrent 
+      - qbittorrent
+      - smb
     restart: always
 
   qbittorrent:
@@ -84,7 +86,7 @@ services:
       - ./downloads:/downloads
     networks: 
       - smb-net
-    command: -s "downloads;/downloads"
+    command: -n -s "downloads;/downloads"
     
 networks:
   port-net:
