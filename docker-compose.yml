@@ -48,9 +48,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "139:139"
-      - "145:145"
-      - "137-138:137-138/udp"
+#      - "139:139"
+#      - "145:145"
+#      - "137-138:137-138/udp"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -87,6 +87,10 @@ services:
     networks: 
       - smb-net
     command: -n -s "downloads;/downloads"
+    ports:
+      - "139:139"
+      - "145:145"
+      - "137-138:137-138/udp"
     
 networks:
   port-net:
