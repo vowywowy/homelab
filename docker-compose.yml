@@ -39,7 +39,10 @@ services:
     image: nginx
     container_name: nginx
     networks:
-      - all
+      - port-net
+      - watch-net
+      - data-net
+      - qbit-net
     ports:
       - "80:80"
       - "443:443"
