@@ -81,9 +81,10 @@ services:
     environment:
       - TZ=EST5EDT
     volumes:
-      - ./downloads:/mount
+      - ./downloads:/downloads
     networks: 
       - smb-net
+    command: -s "downloads;/downloads"
     
 networks:
   port-net:
