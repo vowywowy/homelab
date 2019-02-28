@@ -44,6 +44,7 @@ services:
       - watch-net
       - data-net
       - qbit-net
+      - smb-net
     ports:
       - "80:80"
       - "443:443"
@@ -70,7 +71,17 @@ services:
     networks:
       - qbit-net
     restart: always
-
+  
+  smb:
+    image: dperson/samba
+    container_name: smb
+    environment:
+      - TZ=EST5EDT
+    volumes:
+      - ./downloads:/mount
+    networks: 
+      - smb-net
+    
 networks:
   port-net:
     driver: bridge
@@ -79,4 +90,6 @@ networks:
   data-net:
     driver: bridge
   qbit-net:
+    driver: bridge
+  smb-net:
     driver: bridge
