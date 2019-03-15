@@ -69,6 +69,7 @@ services:
       - netdata
       - qbittorrent
       - smb
+      - plex
     restart: always
 
   qbittorrent:
