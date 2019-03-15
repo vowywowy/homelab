@@ -48,9 +48,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "445:445"
       - "139:139"
-      - "145:145"
+      - "445:445"
       - "137-138:137-138/udp"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
