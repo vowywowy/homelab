@@ -122,6 +122,8 @@ services:
       - ./sonarr:/config
       - ./downloads:/tv
       - ./downloads:/downloads
+    ports:
+      - "8989:8989"
     networks:
         - son-net
     restart: unless-stopped
