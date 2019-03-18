@@ -99,7 +99,7 @@ services:
     restart: always
 
   plex:
-    image: linuxserver/plex
+    image: plexinc/pms-docker
     container_name: plex
     volumes: 
       - ./downloads:/data
@@ -109,16 +109,16 @@ services:
       - plex-net
     ports:
       - "32400:32400"
-      - "32400:32400/udp"
+      - "3005:3005"
+      - "8324:8324"
       - "32469:32469"
-      - "32469:32469/udp"
-      - "5353:5353/udp"
+      - "32410:32410/udp"
+      - "32412-32414:32412-32414/udp"
       - "1900:1900/udp"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - VERSION=docker
-    restart: always
+      - TZ=America/Toronto
+      - PLEX_CLAIM=claim-qxhyy5LBV9fyPH4TejRp
+      - AVERTISE_IP=http://10.0.0.42:32400/
     
 networks:
   port-net:
