@@ -119,14 +119,32 @@ services:
       - PGID=1000
       - TZ=America/Toronto
     volumes:
-      - ./sonarr:/config
+      - ./radarr:/config
       - ./downloads:/tv
       - ./downloads:/downloads
-    ports:
-      - "8989:8989"
     networks:
-        - son-net
-    restart: unless-stopped
+      - son-net
+      - qbit-net
+    restart: always
+  
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - ./sonarr:/config
+      - ./downloads:/movies
+      - ./downloads:/downloads
+    ports:
+      - "7878:7878"
+    networks:
+      - rad-net
+      - qbit-net
+    restart: always
+    
     
 networks:
   port-net:
@@ -142,4 +160,6 @@ networks:
   plex-net:
     driver: bridge
   son-net:
+    driver: bridge
+  rad-net:
     driver: bridge
