@@ -15,8 +15,6 @@ services:
   watchtower:
     container_name: watchtower
     image: v2tec/watchtower
-    networks:
-      - watch-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --cleanup
@@ -41,10 +39,9 @@ services:
     container_name: nginx
     networks:
       - port-net
-      - watch-net
       - data-net
-      - qbit-net
       - son-net
+      - rad-net
     ports:
       #web
       - "80:80"
@@ -55,6 +52,8 @@ services:
       - portainer
       - netdata
       - qbittorrent
+      - sonarr
+      - radarr
     restart: always
 
   qbittorrent:
@@ -70,7 +69,8 @@ services:
       - ./qbittorrent/config:/config
       - ./qbittorrent/downloads:/downloads
     networks:
-      - qbit-net
+      - son-net
+      - rad-net
     restart: always
   
   smb:
@@ -124,7 +124,6 @@ services:
       - ./downloads:/downloads
     networks:
       - son-net
-      - qbit-net
     restart: always
   
   radarr:
@@ -142,18 +141,13 @@ services:
       - "7878:7878"
     networks:
       - rad-net
-      - qbit-net
     restart: always
     
     
 networks:
   port-net:
     driver: bridge
-  watch-net:
-    driver: bridge
   data-net:
-    driver: bridge
-  qbit-net:
     driver: bridge
   smb-net:
     driver: bridge
