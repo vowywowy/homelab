@@ -119,7 +119,7 @@ services:
       - PGID=1000
       - TZ=America/Toronto
     volumes:
-      - ./radarr:/config
+      - ./sonarr:/config
       - ./downloads:/tv
       - ./downloads:/downloads
     networks:
@@ -135,7 +135,7 @@ services:
       - PGID=1000
       - TZ=America/Toronto
     volumes:
-      - ./sonarr:/config
+      - ./radarr:/config
       - ./downloads:/movies
       - ./downloads:/downloads
     ports:
