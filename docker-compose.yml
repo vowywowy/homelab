@@ -42,6 +42,7 @@ services:
       - data-net
       - son-net
       - rad-net
+      - plex-net
     ports:
       #web
       - "80:80"
