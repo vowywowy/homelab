@@ -40,6 +40,7 @@ services:
     networks:
       - port-net
       - data-net
+      - smb-net
       - son-net
       - rad-net
       - plex-net
