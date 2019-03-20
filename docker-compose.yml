@@ -40,18 +40,12 @@ services:
     networks:
       - port-net
       - data-net
-      - smb-net
       - son-net
       - rad-net
-      - plex-net
     ports:
       #web
       - "80:80"
       - "443:443"
-      #smb
-      - "139:139"
-      - "445:445"
-      - "137-138:137-138/udp"
     volumes:
       - ./nginx/homelab.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -91,6 +85,10 @@ services:
       - ./downloads:/downloads
     networks: 
       - smb-net
+    ports:
+      - "139:139"
+      - "445:445"
+      - "137-138:137-138/udp"
     command: -n -s "downloads;/downloads"
     restart: always
 

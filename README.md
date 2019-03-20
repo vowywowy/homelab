@@ -38,4 +38,4 @@ sonarr|http://container_host/sonarr
 radarr|http://container_host/radarr
 netdata|http://container_host/netdata
 portainer|http://container_host/portainer
-
+plex|http://container_host/plex
