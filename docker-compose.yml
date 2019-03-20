@@ -48,7 +48,6 @@ services:
       - "443:443"
     volumes:
       - ./nginx/homelab.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on: 
       - portainer
       - netdata
