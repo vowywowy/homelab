@@ -13,7 +13,7 @@ SMB|smb|smb-net
 Netdata|netdata|data-net
 Portainer|portainer|port-net
 Watchtower|watchtower|*none*
-Nginx|nginx|(port\|data\|qbit\|son\|rad|plex)-net
+Nginx|nginx|(port\|data\|qbit\|son\|rad\|plex)-net
 ## Networks
 ### **son-net & rad-net**
 Sonarr and Radarr need access to qBittorrent, but don't need access to each other. They each get their own network and qBittorrent is a part of both. Nginx needs access to all 3 of these containers.
@@ -50,7 +50,7 @@ A Watchtower container automatically updates all the containers' images and remo
 1. Install git, Docker, and Docker Compose
 2. Clone the repo
 3. Modify the compose file, PLEX_CLAIM and ADVERTISE_IP are unique:
-	- The plex claim token needs to be substituted in the compose file with your own. These are only valid for 4 minutes. *(plex.tv/claim)*
+	- The plex claim token needs to be substituted in the compose file with your own. **These are only valid for 4 minutes.** *([plex.tv/claim](https://plex.tv/claim))*
 	- The ADVERTISE_IP ip address should be your container host's IP.
 4. `docker-compose up -d`
 
@@ -75,3 +75,5 @@ You will need to do configuration on some of these services to get them function
 
 ## TODO
 - Make a `run.sh` that prompts for a Plex claim token, sets ADVERTISE_IP appropriately, and brings up the stack.
+- Make a central reverse proxy option to proxy **all** traffic through Nginx. Currently only SMB and Plex non-web ports are not being proxied. SMB is easy to proxy and has been tested but Plex's non-web ports aren't as simple.
+- Restrict Watchtower to specific times for Plex since an update during streaming may be unenjoyable.
