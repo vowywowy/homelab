@@ -1,7 +1,6 @@
 # Homelab Stack
 A media centric homelab stack with a little bit of monitoring and management.
 -
----
 Comes with 9 containers and 6 networks:
 Application|Container| Networks
 -|-|-
