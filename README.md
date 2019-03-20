@@ -2,8 +2,8 @@
 A media centric homelab stack with a little bit of monitoring and management.
 -
 Comes with 9 containers and 6 networks:
-Application|Container| Networks
--|-|-
+Application|Container|Networks
+---|---|---
 qBittorrent|qbittorrent|(son\|rad)-net
 Sonarr|sonarr|son-net
 Radarr|radarr|rad-net
@@ -17,7 +17,7 @@ Nginx|nginx|(port\|data\|qbit\|son\|rad|plex)-net
 ### **son-net & rad-net**
 Sonarr and Radarr need access to qBittorrent, but don't need access to each other. They each get their own network and qBittorrent is a part of both. Nginx needs access to all 3 of these containers.
 Container|Purpose
--|-
+---|---
 sonarr|Automatically downloads TV shows from various sources. Uses qBittorrent as its downloader.
 radarr|Same as sonarr but for movies.
 qbittorrent|Download client on behalf of sonarr and radarr.
@@ -32,7 +32,7 @@ A Portainer container that provides a web based management interface for Docker.
 ### **nginx**
 An Nginx container connects to all networks that have containers with web interfaces and provides a reverse proxy for said interfaces.
 Original Container|Reverse Proxy
--|-
+---|---
 qbittorrent|http://container_host/qb
 sonarr|http://container_host/sonarr
 radarr|http://container_host/radarr
