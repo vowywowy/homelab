@@ -1,7 +1,7 @@
 # Homelab Stack
 A media centric homelab stack with a little bit of monitoring and management.
 -
-Comes with 9 containers and 6 networks:
+Comes with 10 containers and 7 networks:
 
 Application|Container|Networks
 :--|:--|:--
@@ -12,7 +12,7 @@ Plex|plex|plex-net
 SMB|smb|smb-net
 Netdata|netdata|data-net
 Portainer|portainer|port-net
-Watchtower|watchtower|*none*
+Watchtower|watchtower|watch-net
 Ofelia|ofelia|*none*
 Nginx|nginx|(port\|data\|qbit\|son\|rad\|plex)-net
 ## Networks
@@ -46,7 +46,7 @@ plex|http://container_host/plex
 ### **watchtower**
 A Watchtower container automatically updates all the containers' images and removes unused images.
 ### **ofelia**
-Ofelia is docker based cron. All it does now is restart plex at 2AM to trigger PMS updates and system prunes at 4AM.
+Ofelia is docker based cron. All it does now is restart plex at 2AM to trigger PMS updates and system prunes at 4AM. This container does not need networking.
 
 ---
 ## How to run

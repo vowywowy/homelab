@@ -15,6 +15,8 @@ services:
   watchtower:
     container_name: watchtower
     image: v2tec/watchtower
+    network:
+      - watch-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     #check at 3am only
@@ -150,6 +152,7 @@ services:
   ofelia:
     image: mcuadros/ofelia
     container_name: ofelia
+    network_mode: none
     volumes:
       - ./ofelia:/etc/ofelia
       - /var/run/docker.sock:/var/run/docker.sock
