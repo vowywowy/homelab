@@ -13,6 +13,7 @@ SMB|smb|smb-net
 Netdata|netdata|data-net
 Portainer|portainer|port-net
 Watchtower|watchtower|*none*
+Ofelia|ofelia|*none*
 Nginx|nginx|(port\|data\|qbit\|son\|rad\|plex)-net
 ## Networks
 ### **son-net & rad-net**
@@ -44,6 +45,8 @@ portainer|http://container_host/portainer
 plex|http://container_host/plex
 ### **watchtower**
 A Watchtower container automatically updates all the containers' images and removes unused images.
+### **ofelia**
+Ofelia is docker based cron. All it does now is restart plex at 2AM to trigger PMS updates.
 
 ---
 ## How to run
@@ -76,4 +79,3 @@ You will need to do configuration on some of these services to get them function
 ## TODO
 - Make a `run.sh` that prompts for a Plex claim token, sets ADVERTISE_IP appropriately, and brings up the stack.
 - Make a central reverse proxy option to proxy **all** traffic through Nginx. Currently only SMB and Plex non-web ports are not being proxied. SMB is easy to proxy and has been tested but Plex's non-web ports aren't as simple.
-- Restrict Watchtower to specific times for Plex since an update during streaming may be unenjoyable.
