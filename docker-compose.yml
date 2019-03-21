@@ -164,6 +164,8 @@ networks:
     driver: bridge
   data-net:
     driver: bridge
+  watch-net:
+    driver: bridge
   smb-net:
     driver: bridge
   plex-net:
