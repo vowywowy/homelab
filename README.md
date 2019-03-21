@@ -46,7 +46,7 @@ plex|http://container_host/plex
 ### **watchtower**
 A Watchtower container automatically updates all the containers' images and removes unused images.
 ### **ofelia**
-Ofelia is docker based cron. All it does now is restart plex at 2AM to trigger PMS updates.
+Ofelia is docker based cron. All it does now is restart plex at 2AM to trigger PMS updates and system prunes at 4AM.
 
 ---
 ## How to run
