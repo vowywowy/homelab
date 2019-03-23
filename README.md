@@ -24,11 +24,12 @@ Container|Purpose
 :--|:--
 sonarr|Automatically downloads TV shows from various sources. Uses qBittorrent as its downloader.
 radarr|Same as sonarr but for movies.
+jackett|Tracker indexer/translator for sonarr and radarr.
 qbittorrent|Download client on behalf of sonarr and radarr.
 ### **plex-net**
 Consists of just the Plex container. This keeps the Plex container in bridge mode isolated from the other containers. It doesn't need to talk to them, so it can't.
 ### **smb-net**
-Has one container that exposes the media storage location as an SMB share so it can easily managed from Windows. Same isolation concept as plex-net.
+Has one container that exposes the media storage location and the .torrent location as an SMB share so it can easily managed from Windows. Same isolation concept as plex-net.
 ### **data-net**
 A Netdata container that monitors and visualizes the container host's metrics.
 ### **port-net**
@@ -84,4 +85,5 @@ You will need to do configuration on some of these services to get them function
 	- These config files shouldn't be distributed with this repo since they contain other info that should be unique to each environment.
 	- **On first run you must expose these containers' web interfaces and make the appropriate configuration before trying to access them through the reverse proxy.**
 - Make a `run.sh` that prompts for a Plex claim token, sets ADVERTISE_IP appropriately, and brings up the stack.
+- Jackett might not need to talk to qbittorrent, depending on use case. Additional networks can be added to achieve isolation.
 - Make a central reverse proxy option to proxy **all** traffic through Nginx. Currently only SMB and Plex non-web ports are not being proxied. SMB is easy to proxy and has been tested but Plex's non-web ports aren't as simple.

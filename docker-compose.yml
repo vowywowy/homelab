@@ -95,7 +95,7 @@ services:
       - "139:139"
       - "445:445"
       - "137-138:137-138/udp"
-    command: -n -s "downloads;/downloads"
+    command: -n -s "downloads;/downloads" -s "torrents;/torrents"
     restart: always
 
   plex:
