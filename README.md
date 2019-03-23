@@ -78,5 +78,10 @@ You will need to do configuration on some of these services to get them function
 2. Everything important is a persistent volume so you only need to configure once. 
 
 ## TODO
+- Set base URL for Sonarr/Radarr/Jackett at container runtime
+	- Sonarr/Radarr store theirs in `/config/config.xml` in `Config.UrlBase`.
+	- Jackett stores its in `/config/Jackett/ServerConfig.json` in `Object.BasePathOverride` and requires a leading `/`.
+	- These config files shouldn't be distributed with this repo since they contain other info that should be unique to each environment.
+	- **On first run you must expose these containers' web interfaces and make the appropriate configuration before trying to access them through the reverse proxy.**
 - Make a `run.sh` that prompts for a Plex claim token, sets ADVERTISE_IP appropriately, and brings up the stack.
 - Make a central reverse proxy option to proxy **all** traffic through Nginx. Currently only SMB and Plex non-web ports are not being proxied. SMB is easy to proxy and has been tested but Plex's non-web ports aren't as simple.

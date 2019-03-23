@@ -169,8 +169,6 @@ services:
     volumes:
       - ./jackett:/config
       - ./torrents:/downloads
-    ports:
-      - 9117
     networks:
       - jack-net
       - son-net
