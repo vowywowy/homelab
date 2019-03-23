@@ -1,23 +1,24 @@
 # Homelab Stack
 A media centric homelab stack with a little bit of monitoring and management.
 -
-Comes with 10 containers and 7 networks:
+Comes with 11 containers and 8 networks:
 
 Application|Container|Networks
 :--|:--|:--
 qBittorrent|qbittorrent|(son\|rad)-net
 Sonarr|sonarr|son-net
 Radarr|radarr|rad-net
+Jackett|jackett|(son\|rad\|jack)-net
 Plex|plex|plex-net
 SMB|smb|smb-net
 Netdata|netdata|data-net
 Portainer|portainer|port-net
 Watchtower|watchtower|watch-net
 Ofelia|ofelia|*none*
-Nginx|nginx|(port\|data\|qbit\|son\|rad\|plex)-net
+Nginx|nginx|(port\|data\|qbit\|son\|rad\|jack\|plex)-net
 ## Networks
 ### **son-net & rad-net**
-Sonarr and Radarr need access to qBittorrent, but don't need access to each other. They each get their own network and qBittorrent is a part of both. Nginx needs access to all 3 of these containers.
+Sonarr and Radarr need access to qBittorrent, but don't need access to each other. They each get their own network and qBittorrent is a part of both. Nginx and Jackett need access to all 3 of these containers.
 
 Container|Purpose
 :--|:--

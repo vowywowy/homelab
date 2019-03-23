@@ -46,6 +46,7 @@ services:
       - son-net
       - rad-net
       - plex-net
+      - jack-net
     ports:
       #web
       - "80:80"
@@ -60,6 +61,7 @@ services:
       - sonarr
       - radarr
       - plex
+      - jackett
     restart: always
 
   qbittorrent:
@@ -73,7 +75,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - ./qbittorrent/config:/config
-      - ./qbittorrent/downloads:/downloads
+      - ./downloads:/downloads
     networks:
       - son-net
       - rad-net
@@ -86,6 +88,7 @@ services:
       - TZ=EST5EDT
     volumes:
       - ./downloads:/downloads
+      - ./torrents:/torrents
     networks: 
       - smb-net
     ports:
@@ -143,8 +146,6 @@ services:
       - ./radarr:/config
       - ./downloads:/movies
       - ./downloads:/downloads
-    ports:
-      - "7878:7878"
     networks:
       - rad-net
     restart: always
@@ -157,6 +158,23 @@ services:
       - ./ofelia:/etc/ofelia
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
+  
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+    volumes:
+      - ./jackett:/config
+      - ./torrents:/downloads
+    ports:
+      - 9117
+    networks:
+      - jack-net
+      - son-net
+      - rad-net
     
     
 networks:
@@ -173,4 +191,6 @@ networks:
   son-net:
     driver: bridge
   rad-net:
+    driver: bridge
+  jack-net:
     driver: bridge
