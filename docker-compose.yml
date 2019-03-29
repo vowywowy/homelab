@@ -133,6 +133,8 @@ services:
       - ./downloads:/downloads
     networks:
       - son-net
+    ports:
+      - "8989:8989"
     restart: always
   
   radarr:
@@ -148,6 +150,8 @@ services:
       - ./downloads:/downloads
     networks:
       - rad-net
+    ports:
+      - "7878:7878"
     restart: always
   
   ofelia:
