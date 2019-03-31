@@ -23,19 +23,19 @@ services:
     command: --cleanup --schedule "0 0 3 * * *"
     restart: always
 
-  netdata:
-    container_name: netdata
-    image: titpetric/netdata
-    cap_add:
-      - SYS_PTRACE
-    networks:
-      - data-net
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./netdata:/etc/netdata/python.d
-    restart: always
+#  netdata:
+#    container_name: netdata
+#    image: titpetric/netdata
+#    cap_add:
+#      - SYS_PTRACE
+#    networks:
+#      - data-net
+#    volumes:
+#      - /proc:/host/proc:ro
+#      - /sys:/host/sys:ro
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - ./netdata:/etc/netdata/python.d
+#    restart: always
 
   nginx:
     image: nginx:alpine
