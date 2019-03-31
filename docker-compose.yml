@@ -42,7 +42,7 @@ services:
     container_name: nginx
     networks:
       - port-net
-      - data-net
+#      - data-net
       - son-net
       - rad-net
       - plex-net
@@ -181,8 +181,8 @@ services:
 networks:
   port-net:
     driver: bridge
-  data-net:
-    driver: bridge
+#  data-net:
+#    driver: bridge
   watch-net:
     driver: bridge
   smb-net:
