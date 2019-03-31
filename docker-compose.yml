@@ -38,7 +38,7 @@ services:
     restart: always
 
   nginx:
-    image: nginx
+    image: nginx:alpine
     container_name: nginx
     networks:
       - port-net
@@ -48,7 +48,6 @@ services:
       - plex-net
       - jack-net
     ports:
-      #web
       - "80:80"
       - "443:443"
     volumes:
