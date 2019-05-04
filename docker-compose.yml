@@ -176,7 +176,20 @@ services:
       - jack-net
       - son-net
       - rad-net
-    
+    restart: always
+  
+  minecraft:
+    image: itzg/minecraft-server
+    container_name: minecraft
+    environment:
+      - EULA=TRUE
+    volumes:
+      - ./minecraft:/data
+    networks:
+      - mine-net
+    ports: 
+      - "25565:25565"
+
     
 networks:
   port-net:
@@ -194,4 +207,6 @@ networks:
   rad-net:
     driver: bridge
   jack-net:
+    driver: bridge
+  mine-net:
     driver: bridge
