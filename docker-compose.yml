@@ -155,15 +155,6 @@ services:
       - "7878:7878"
     restart: always
   
-  ofelia:
-    image: mcuadros/ofelia
-    container_name: ofelia
-    network_mode: none
-    volumes:
-      - ./ofelia:/etc/ofelia
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
-  
   jackett:
     image: linuxserver/jackett
     container_name: jackett
