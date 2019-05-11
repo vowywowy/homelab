@@ -67,8 +67,8 @@ services:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
     environment:
-      - PUID=1001
-      - PGID=1001
+      - PUID=1000
+      - PGID=1000
       - TZ=America/Toronto
       - UMASK_SET=022
       - WEBUI_PORT=8080
@@ -116,6 +116,8 @@ services:
       - "1900:1900/udp"
     environment:
       - TZ=America/Toronto
+      - PLEX_UID=1000
+      - PLEX_GID=1000
       - PLEX_CLAIM=claim-qxhyy5LBV9fyPH4TejRp
       - ADVERTISE_IP=http://10.0.0.42:32400/
     
