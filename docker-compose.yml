@@ -201,7 +201,9 @@ services:
       - pi-net
     ports:
       - "53:53"
+      - "53:53/udp"
       - "67:67"
+      - "67:67/udp"
     restart: always
 
     
