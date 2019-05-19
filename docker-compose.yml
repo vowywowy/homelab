@@ -47,6 +47,7 @@ services:
       - rad-net
       - plex-net
       - jack-net
+      - pi-net
     ports:
       - "80:80"
       - "443:443"
