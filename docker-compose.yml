@@ -190,6 +190,8 @@ services:
     container_name: pihole
     environment: 
       - TZ=America/Toronto
+      - DNS1=208.67.220.222
+      - DNS2=208.67.222.220
     volumes:
       - ./pihole/config:/etc/pihole
       - ./pihole/dnsmasq:/etc/dnsmasq.d
