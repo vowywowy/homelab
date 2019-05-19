@@ -61,6 +61,7 @@ services:
       - radarr
       - plex
       - jackett
+      - pihole
     restart: always
 
   qbittorrent:
@@ -182,6 +183,23 @@ services:
       - mine-net
     ports: 
       - "25565:25565"
+  
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    environment: 
+      - TZ=America/Toronto
+    volumes:
+      - ./pihole/config:/etc/pihole
+      - ./pihole/dnsmasq:/etc/dnsmasq.d
+    dns:
+      - 127.0.0.1
+    networks:
+      - pi-net
+    ports:
+      - "53:53"
+      - "67:67"
+    restart: always
 
     
 networks:
@@ -202,4 +220,6 @@ networks:
   jack-net:
     driver: bridge
   mine-net:
+    driver: bridge
+  pi-net:
     driver: bridge
