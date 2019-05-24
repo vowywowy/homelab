@@ -216,5 +216,5 @@ networks:
     driver: bridge
 #  mine-net:
 #    driver: bridge
-  pi-net:
-    driver: bridge
+#  pi-net:
+#    driver: bridge
