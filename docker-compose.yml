@@ -47,22 +47,12 @@ services:
       - rad-net
       - plex-net
       - jack-net
-      - pi-net
+#      - pi-net
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx/homelab.conf:/etc/nginx/conf.d/default.conf
-    depends_on: 
-      - portainer
-#      - netdata
-      - qbittorrent
-      - smb
-      - sonarr
-      - radarr
-      - plex
-      - jackett
-      - pihole
     restart: always
 
   qbittorrent:
@@ -173,38 +163,38 @@ services:
       - rad-net
     restart: always
   
-  minecraft:
-    image: itzg/minecraft-server
-    container_name: minecraft
-    environment:
-      - EULA=TRUE
-    volumes:
-      - ./minecraft:/data
-    networks:
-      - mine-net
-    ports: 
-      - "25565:25565"
+  #minecraft:
+  #  image: itzg/minecraft-server
+  #  container_name: minecraft
+  #  environment:
+  #    - EULA=TRUE
+  #  volumes:
+  #    - ./minecraft:/data
+  #  networks:
+  #    - mine-net
+  #  ports: 
+  #    - "25565:25565"
   
-  pihole:
-    image: pihole/pihole:latest
-    container_name: pihole
-    environment: 
-      - TZ=America/Toronto
-      - DNS1=208.67.220.222
-      - DNS2=208.67.222.220
-    volumes:
-      - ./pihole/config:/etc/pihole
-      - ./pihole/dnsmasq:/etc/dnsmasq.d
-    dns:
-      - 127.0.0.1
-    networks:
-      - pi-net
-    ports:
-      - "53:53"
-      - "53:53/udp"
-      - "67:67"
-      - "67:67/udp"
-    restart: always
+#  pihole:
+#    image: pihole/pihole:latest
+#    container_name: pihole
+#    environment: 
+#      - TZ=America/Toronto
+#      - DNS1=208.67.220.222
+#      - DNS2=208.67.222.220
+#    volumes:
+#      - ./pihole/config:/etc/pihole
+#      - ./pihole/dnsmasq:/etc/dnsmasq.d
+#    dns:
+#      - 127.0.0.1
+#    networks:
+#      - pi-net
+#    ports:
+#      - "53:53"
+#      - "53:53/udp"
+#      - "67:67"
+#      - "67:67/udp"
+#    restart: always
 
     
 networks:
@@ -224,7 +214,7 @@ networks:
     driver: bridge
   jack-net:
     driver: bridge
-  mine-net:
-    driver: bridge
+#  mine-net:
+#    driver: bridge
   pi-net:
     driver: bridge
