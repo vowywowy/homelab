@@ -175,26 +175,29 @@ services:
   #  ports: 
   #    - "25565:25565"
   
-#  pihole:
-#    image: pihole/pihole:latest
-#    container_name: pihole
-#    environment: 
-#      - TZ=America/Toronto
-#      - DNS1=208.67.220.222
-#      - DNS2=208.67.222.220
-#    volumes:
-#      - ./pihole/config:/etc/pihole
-#      - ./pihole/dnsmasq:/etc/dnsmasq.d
-#    dns:
-#      - 127.0.0.1
-#    networks:
-#      - pi-net
-#    ports:
-#      - "53:53"
-#      - "53:53/udp"
-#      - "67:67"
-#      - "67:67/udp"
-#    restart: always
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    environment: 
+      - TZ=America/Toronto
+      - DNS1=208.67.220.222
+      - DNS2=208.67.222.220
+    volumes:
+      - ./pihole/config:/etc/pihole
+      - ./pihole/dnsmasq:/etc/dnsmasq.d
+    dns:
+      - 127.0.0.1
+    networks:
+      - jack-net
+      - son-net
+      - rad-net
+      - plex-net
+    ports:
+      - "53:53"
+      - "53:53/udp"
+      - "67:67"
+      - "67:67/udp"
+    restart: always
 
     
 networks:
@@ -202,8 +205,6 @@ networks:
     driver: bridge
 #  data-net:
 #    driver: bridge
-  watch-net:
-    driver: bridge
   smb-net:
     driver: bridge
   plex-net:
