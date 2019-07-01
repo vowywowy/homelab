@@ -15,8 +15,6 @@ services:
   watchtower:
     container_name: watchtower
     image: v2tec/watchtower
-    networks:
-      - watch-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     #check at 3am only
