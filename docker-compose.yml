@@ -12,7 +12,7 @@ services:
       rollback_config:
         parallelism: 0
     networks:
-      - port_age-net
+      - swarm-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
@@ -27,8 +27,7 @@ services:
       placement:
         constraints: [node.role == manager]
     networks:
-      - port-net
-      - port_age-net
+      - swarm-net
     volumes:
       - portainer:/data
     command: -H tcp://tasks.portainer_agent:9001 --tlsskipverify
@@ -55,12 +54,7 @@ services:
       rollback_config:
         parallelism: 0
     networks:
-      - port-net
-      - plex-net
-#      - pi-net
-      - son-ng-net
-      - rad-ng-net
-      - jack-net
+      - swarm-net
     ports:
       - "80:80"
       - "443:443"
@@ -76,8 +70,7 @@ services:
       - qbittorrent:/config
       - downloads:/downloads
     networks:
-      - son-qb-net
-      - rad-qb-net 
+      - swarm-net
   smb:
     image: dperson/samba
     deploy:
@@ -87,12 +80,12 @@ services:
       rollback_config:
         parallelism: 0
     env_file:
-      - ./.env/common.env
+      - ./.env/smb.env
     volumes:
       - downloads:/downloads
       - torrents:/torrents
     networks: 
-      - smb-net
+      - swarm-net
     ports:
       - "139:139"
       - "445:445"
@@ -111,7 +104,7 @@ services:
       - plex_transcode:/transcode
       - plex_config:/config
     networks:
-      - plex-net
+      - swarm-net
     ports:
       - "32400:32400"
       - "3005:3005"
@@ -138,9 +131,7 @@ services:
       - downloads:/tv
       - downloads:/downloads
     networks:
-      - son-qb-net
-      - son-ng-net
-      - son-jack-net
+      - swarm-net
     ports:
       - "8989:8989"  
   radarr:
@@ -158,9 +149,7 @@ services:
       - downloads:/movies
       - downloads:/downloads
     networks:
-      - rad-qb-net
-      - rad-ng-net
-      - rad-jack-net
+      - swarm-net
     ports:
       - "7878:7878"  
   jackett:
@@ -177,28 +166,29 @@ services:
       - jackett:/config
       - torrents:/downloads
     networks:
-      - son-jack-net
-      - rad-jack-net
-      - jack-net  
-#  pihole:
-#    image: pihole/pihole:latest
-# 
-#    environment: 
-#      - TZ=America/Toronto
-#      - DNS1=208.67.220.222
-#      - DNS2=208.67.222.220
-#    volumes:
-#      - pihole_config:/etc/pihole
-#      - pihole_dnsmasq:/etc/dnsmasq.d
-#    dns:
-#      - 127.0.0.1
-#    networks:
-#      - pi-net
-#    ports:
-#      - "53:53"
-#      - "53:53/udp"
-#      - "67:67"
-#      - "67:67/udp"
+      - swarm-net
+  pihole:
+    image: pihole/pihole:latest
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 0
+      rollback_config:
+        parallelism: 0
+    env_file:
+      - ./.env/pihole.env
+    volumes:
+      - pihole_config:/etc/pihole
+      - pihole_dnsmasq:/etc/dnsmasq.d
+    dns:
+      - 127.0.0.1
+    networks:
+      - swarm-net
+    ports:
+      - "53:53"
+      - "53:53/udp"
+      - "67:67"
+      - "67:67/udp"
 
 volumes:
   portainer:
@@ -210,8 +200,8 @@ volumes:
   sonarr:
   radarr:
   jackett:
-#  pihole_config:
-#  pihole_dnsmasq:
+  pihole_config:
+  pihole_dnsmasq:
 
 configs:
   nginx_config:
@@ -220,29 +210,5 @@ configs:
     file: ./netdata/nginx.conf
     
 networks:
-  port-net:
+  swarm-net:
     driver: overlay
-  watch-net:
-    driver: overlay
-  smb-net:
-    driver: overlay
-  plex-net:
-    driver: overlay
-  son-qb-net:
-    driver: overlay
-  son-ng-net:
-    driver: overlay
-  son-jack-net:
-    driver: overlay
-  rad-qb-net:
-    driver: overlay
-  rad-ng-net:
-    driver: overlay
-  rad-jack-net:
-    driver: overlay
-  jack-net:
-    driver: overlay
-  port_age-net:
-    driver: overlay
-#  pi-net:
-#    driver: overlay
