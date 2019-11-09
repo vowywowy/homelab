@@ -84,7 +84,7 @@ services:
     <<: *default-logging
     deploy:
       <<: *default-single-replica-deploy    
-    environment: [SLEEP_TIME="8h"]
+    environment: [SLEEP_TIME=8h]
     volumes: [/var/run/docker.sock:/var/run/docker.sock]
     networks: [shepherd-net]
   qbittorrent:
