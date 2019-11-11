@@ -68,16 +68,12 @@ You will need to do configuration on some of these services to get them function
 	- Since these are things that do the hard stuff, they need the most work and I can't provide a config for obvious reasons. You can setup qBittorrent access with `qbittorrent:8080` and the username/password from qBittorrent's web interface. Google is your friend for configuring the rest.
 	- These also need some post config to work behind path based reverse proxying:
 	```sh
-	# This only needs to be done once simce the config is volumized
+	# This only needs to be done once since the config is volumized
 	stackName='homelab'; \
-	docker exec $(docker ps -qf name=${stackName}_jackett) \
-        sed -i 's@"BasePathOverride":.*@"BasePathOveride":"/jackett"@g' \
-        /config/Jackett/ServerConfig.json; \
-    docker service update ${stackName}_jackett --force; \
-    for arr in 'radarr' 'sonarr'; do \
+    for arr in 'radarr' 'sonarr'; do
         docker exec $(docker ps -qf name=${stackName}_${arr}) \
-        sed -i "s@<UrlBase>.*</UrlBase>@<UrlBase>/${arr}</UrlBase>@g" /config/config.xml; \
-        docker service update ${stackName}_${arr} --force; \
+            sed -i "s@<UrlBase>.*</UrlBase>@<UrlBase>/${arr}</UrlBase>@g" /config/config.xml;
+        docker service update ${stackName}_${arr} --force;
     done;
 	```
 4. Configuring Plex the first time must be done through the :32400 url.
@@ -88,5 +84,6 @@ You will need to do configuration on some of these services to get them function
 4. Port configuration is also present but commented out, just in case you need it.
 
 ## TODO
-- Set base URL for Sonarr/Radarr/Jackett at container runtime
+- Set base URL for Sonarr/Radarr at container runtime
 - Make a `run.sh` that prompts for a Plex claim token, sets ADVERTISE_IP appropriately, and brings up the stack.
+- Figure out how to path proxy traefik dashboard (seems like no one has done this on 2.0 yet)

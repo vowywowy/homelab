@@ -30,6 +30,15 @@ services:
     <<: *default-logging
     deploy:
       <<: *default-single-replica-deploy
+      labels: 
+        - "traefik.enable=true"
+        - "traefik.http.routers.traefik.entrypoints=web"
+        - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik`)"
+        - "traefik.http.middlewares.traefik-redirect.redirectregex.regex=^(.*)/traefik$$"
+        - "traefik.http.middlewares.traefik-redirect.redirectregex.replacement=$$1/traefik/"
+        - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik/"
+        - "traefik.http.routers.traefik.middlewares=traefik-strip,traefik-redirect"   
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
     volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
     networks: 
       - traefik-port-net
@@ -193,7 +202,7 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.radarr.entrypoints=web"
-        - "traefik.http.routers.radarr.rule=PathPrefix(`/radarr`)"    
+        - "traefik.http.routers.radarr.rule=PathPrefix(`/radarr`)"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
         - "traefik.docker.network=homelab_traefik-radarr-net"
     <<: *default-env-file
@@ -214,7 +223,9 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.jackett.entrypoints=web"
-        - "traefik.http.routers.jackett.rule=PathPrefix(`/jackett`)"    
+        - "traefik.http.routers.jackett.rule=PathPrefix(`/jackett`)"
+        - "traefik.http.middlewares.jackett-strip.stripprefix.prefixes=/jackett"
+        - "traefik.http.routers.jackett.middlewares=jackett-strip"      
         - "traefik.http.services.jackett.loadbalancer.server.port=9117"
         - "traefik.docker.network=homelab_traefik-jackett-net"
     <<: *default-env-file
