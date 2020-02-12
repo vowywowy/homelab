@@ -38,7 +38,7 @@ services:
         - "traefik.http.middlewares.traefik-redirect.redirectregex.replacement=$$1/traefik/"
         - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik/"
         - "traefik.http.routers.traefik.middlewares=traefik-strip,traefik-redirect"   
-        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+        - "traefik.http.services.traefik.loadbalancer.server.port=9090"
     volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
     networks: 
       - traefik-port-net
@@ -47,15 +47,20 @@ services:
       - traefik-radarr-net
       - traefik-jackett-net
       - traefik-plex-net
+      - traefik-unifi-net
     ports:
       - "80:80"
-      - "8080:8080"
+      - "443:443"
+      - "9090:9090"
     command: 
+      - "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.swarmMode=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.traefik.address=:9090"
   portainer_agent:
     image: portainer/agent
     <<: *default-logging
@@ -160,7 +165,7 @@ services:
       - PLEX_UID=1000
       - PLEX_GID=1000
       - PLEX_CLAIM=claim-qxhyy5LBV9fyPH4TejRp
-      - ADVERTISE_IP=http://10.0.0.36:32400/
+      - ADVERTISE_IP=http://10.0.0.15:32400/
     volumes: 
       - ./downloads:/data
       - ./plex:/config
@@ -237,11 +242,51 @@ services:
       - jackett-sonarr-net
       - traefik-jackett-net
     #ports: ["9117:9117"]
+  unifi:
+    image: jacobalberty/unifi
+    <<: *default-logging
+    deploy:
+      <<: *default-single-replica-deploy
+      labels: 
+        - "traefik.enable=true"
+        - "traefik.tcp.routers.unifi.entrypoints=websecure"
+        - "traefik.tcp.routers.unfi.rule=HostSNI(`unifi.house.lan`)"
+        - "traefik.tcp.routers.unifi.tls.passthrough=true"
+        - "traefik.tcp.services.unfi.loadbalancer.server.port=8443"
+    <<: *default-env-file
+    volumes: 
+      - ./unifi:/unifi
+    ports:
+      - "3478:3478/udp"
+      - "10001:10001/udp"
+      - "8080:8080"
+      - "8443:8443"
+      - "8843:8843"
+      - "8880:8880"
+      - "6789:6789"
+    networks: [traefik-unifi-net]
+  pihole:
+    image: pihole/pihole
+    <<: *default-logging
+    deploy:
+      <<: *default-single-replica-deploy
+    environment: [TZ=America/Toronto]
+    volumes:
+      - ./pihole:/etc/pihole/
+      - ./dnsmasq:/etc/dnsmasq.d/
+    ports: 
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8011:80/tcp"
+      - "4431:443/tcp"
+
 
 networks:
   port-net:
   shepherd-net:
   smb-net:
+  unifi-net:
   qb-sonarr-net:
   qb-radarr-net:
   jackett-sonarr-net:
@@ -252,6 +297,8 @@ networks:
   traefik-radarr-net:
   traefik-jackett-net:
   traefik-plex-net:
+  traefik-unifi-net:
+
 
 #volumes:
 #  portainer:
@@ -262,3 +309,4 @@ networks:
 #  sonarr:
 #  radarr:
 #  jackett:
+#  unifi:
