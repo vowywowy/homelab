@@ -1,0 +1,9 @@
+{
+	"service": {
+		"name": "radarr",
+		"tags": [
+			"radarr"
+		],
+		"port": 80
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"service": {
+		"name": "unifi",
+		"tags": [
+			"unifi"
+		],
+		"port": 80
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"service": {
+		"name": "plex",
+		"tags": [
+			"plex"
+		],
+		"port": 80
+	}
+}

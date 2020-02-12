@@ -1,0 +1,9 @@
+{
+	"service": {
+		"name": "sonarr",
+		"tags": [
+			"sonarr"
+		],
+		"port": 80
+	}
+}

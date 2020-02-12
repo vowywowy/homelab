@@ -1,0 +1,9 @@
+{
+	"service": {
+		"name": "qb",
+		"tags": [
+			"qb"
+		],
+		"port": 80
+	}
+}
