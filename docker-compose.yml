@@ -272,8 +272,8 @@ services:
       <<: *default-single-replica-deploy
     environment: [TZ=America/Toronto]
     volumes:
-      - ./pihole:/etc/pihole/
-      - ./dnsmasq:/etc/dnsmasq.d/
+      - ./pihole/config:/etc/pihole/
+      - ./pihole/dnsmasq:/etc/dnsmasq.d/
     ports: 
       - "53:53/tcp"
       - "53:53/udp"
