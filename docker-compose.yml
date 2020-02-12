@@ -271,6 +271,7 @@ services:
     deploy:
       <<: *default-single-replica-deploy
     environment: [TZ=America/Toronto]
+    dns: [127.0.0.1]
     volumes:
       - ./pihole/config:/etc/pihole/
       - ./pihole/dnsmasq:/etc/dnsmasq.d/
