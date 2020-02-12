@@ -280,6 +280,7 @@ services:
       - "67:67/udp"
       - "8011:80/tcp"
       - "4431:443/tcp"
+    networks: [pihole-net]
 
 
 networks:
@@ -287,6 +288,7 @@ networks:
   shepherd-net:
   smb-net:
   unifi-net:
+  pihole-net:
   qb-sonarr-net:
   qb-radarr-net:
   jackett-sonarr-net:
