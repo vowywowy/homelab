@@ -1,11 +1,12 @@
 ---
 version: '3.7'
 
-x-default-logging: &default-logging
+x-default-logging-and-network: &default-logging-and-network
   logging:
     options:
       max-size: 10m
       max-file: 5
+  networks: [network]
 
 x-default-global-deploy: &default-global-deploy
   mode: global
@@ -27,7 +28,7 @@ x-default-env-file: &default-env-file
 services:
   traefik:
     image: traefik
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels: 
@@ -39,15 +40,8 @@ services:
         - "traefik.http.middlewares.traefik-strip.stripprefix.prefixes=/traefik/"
         - "traefik.http.routers.traefik.middlewares=traefik-strip,traefik-redirect"   
         - "traefik.http.services.traefik.loadbalancer.server.port=9090"
+    environment: [SERVICE_NAME=traefik]
     volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
-    networks: 
-      - traefik-port-net
-      - traefik-qb-net
-      - traefik-sonarr-net
-      - traefik-radarr-net
-      - traefik-jackett-net
-      - traefik-plex-net
-      - traefik-unifi-net
     ports:
       - "80:80"
       - "443:443"
@@ -63,16 +57,15 @@ services:
       - "--entrypoints.traefik.address=:9090"
   portainer_agent:
     image: portainer/agent
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-global-deploy    
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
-    networks: [port-net]
   portainer:
     image: portainer/portainer
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels:
@@ -85,25 +78,20 @@ services:
         - "traefik.http.middlewares.portainer-strip.stripprefix.prefixes=/portainer/"
         - "traefik.http.routers.portainer.middlewares=portainer-strip,portainer-redirect"    
         - "traefik.http.services.potainer.loadbalancer.server.port=9000"
-        - "traefik.docker.network=homelab_traefik-port-net"
     volumes:
-    #  - ./portainer:/data
+      - ./portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
-    networks: 
-      - port-net
-      - traefik-port-net
     command: -H tcp://tasks.portainer_agent:9001 --tlsskipverify
   shepherd:
     image: mazzolino/shepherd
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy    
     environment: [SLEEP_TIME=8h]
     volumes: [/var/run/docker.sock:/var/run/docker.sock]
-    networks: [shepherd-net]
   qbittorrent:
     image: linuxserver/qbittorrent
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels:
@@ -121,27 +109,21 @@ services:
         - "traefik.http.routers.qb.middlewares=qb-strip,qb-redirect,qb-headers"
         - "traefik.http.services.qb.loadbalancer.server.port=8080"
         - "traefik.http.services.qb.loadbalancer.passhostheader=false"
-        - "traefik.docker.network=homelab_traefik-qb-net"
     <<: *default-env-file
-    #volumes:
-    #  - ./qbittorrent:/config
-    #  - ./downloads:/downloads
-    networks: 
-      - qb-sonarr-net
-      - qb-radarr-net
-      - traefik-qb-net
+    volumes:
+      - ./qbittorrent:/config
+      - ./downloads:/downloads
   smb:
     image: dperson/samba
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy 
     environment: 
       - USERID=1000
       - GROUPID=1000
-    #volumes:
-    #  - ./downloads:/downloads
-    #  - ./torrents:/torrents
-    networks: [smb-net]
+    volumes:
+      - ./downloads:/downloads
+      - ./torrents:/torrents
     ports:
       - "139:139"
       - "445:445"
@@ -149,7 +131,7 @@ services:
     command: -n -r -p -s "downloads;/downloads;yes;no" -s "torrents;/torrents;yes;no"
   plex:
     image: plexinc/pms-docker:public
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels: 
@@ -160,16 +142,14 @@ services:
         - "traefik.http.middlewares.plex-redirect.redirectregex.replacement=$$1/web/"
         - "traefik.http.routers.plex.middlewares=plex-redirect"
         - "traefik.http.services.plex.loadbalancer.server.port=32400"
-        - "traefik.docker.network=homelab_traefik-plex-net"
     environment:
       - PLEX_UID=1000
       - PLEX_GID=1000
       - PLEX_CLAIM=claim-qxhyy5LBV9fyPH4TejRp
       - ADVERTISE_IP=http://10.0.0.15:32400/
-    #volumes: 
-    #  - ./downloads:/data
-    #  - ./plex:/config
-    networks: [traefik-plex-net]
+    volumes: 
+      - ./downloads:/data
+      - ./plex:/config
     ports:
       - "32400:32400"
       - "3005:3005"
@@ -180,7 +160,7 @@ services:
       - "1900:1900/udp"
   sonarr:
     image: linuxserver/sonarr
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels:
@@ -188,20 +168,15 @@ services:
         - "traefik.http.routers.sonarr.entrypoints=web"
         - "traefik.http.routers.sonarr.rule=PathPrefix(`/sonarr`)"    
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
-        - "traefik.docker.network=homelab_traefik-sonarr-net"
     <<: *default-env-file
-    #volumes:
-    #  - ./sonarr:/config
-    #  - ./downloads:/tv
-    #  - ./downloads:/downloads
-    networks: 
-      - qb-sonarr-net
-      - jackett-sonarr-net
-      - traefik-sonarr-net
+    volumes:
+      - ./sonarr:/config
+      - ./downloads:/tv
+      - ./downloads:/downloads
     #ports: ["8989:8989"]
   radarr:
     image: linuxserver/radarr
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels:
@@ -209,20 +184,15 @@ services:
         - "traefik.http.routers.radarr.entrypoints=web"
         - "traefik.http.routers.radarr.rule=PathPrefix(`/radarr`)"
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
-        - "traefik.docker.network=homelab_traefik-radarr-net"
     <<: *default-env-file
-    #volumes:
-    #  - ./radarr:/config
-    #  - ./downloads:/movies
-    #  - ./downloads:/downloads
-    networks:
-      - qb-radarr-net 
-      - jackett-radarr-net
-      - traefik-radarr-net
+    volumes:
+      - ./radarr:/config
+      - ./downloads:/movies
+      - ./downloads:/downloads
     #ports: ["7878:7878"]
   jackett:
     image: linuxserver/jackett
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy 
       labels:
@@ -234,17 +204,13 @@ services:
         - "traefik.http.services.jackett.loadbalancer.server.port=9117"
         - "traefik.docker.network=homelab_traefik-jackett-net"
     <<: *default-env-file
-    #volumes:
-    #  - ./jackett:/config
-    #  - ./torrents:/downloads
-    networks: 
-      - jackett-radarr-net
-      - jackett-sonarr-net
-      - traefik-jackett-net
+    volumes:
+      - ./jackett:/config
+      - ./torrents:/downloads
     #ports: ["9117:9117"]
   unifi:
     image: jacobalberty/unifi
-    <<: *default-logging
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
       labels: 
@@ -254,8 +220,8 @@ services:
         - "traefik.tcp.routers.unifi.tls.passthrough=true"
         - "traefik.tcp.services.unfi.loadbalancer.server.port=8443"
     <<: *default-env-file
-    #volumes: 
-    #  - ./unifi:/unifi
+    volumes: 
+      - ./unifi:/unifi
     ports:
       - "3478:3478/udp"
       - "10001:10001/udp"
@@ -264,90 +230,16 @@ services:
       - "8843:8843"
       - "8880:8880"
       - "6789:6789"
-    networks: [traefik-unifi-net]
-  consul:
-    image: consul
-    <<: *default-logging
+  dns:
+    image: andyshinn/dnsmasq:2.76
+    <<: *default-logging-and-network
     deploy:
       <<: *default-single-replica-deploy
-    environment: 
-      - CONSUL_ALLOW_PRIVILEGED_PORTS=yes
-    secrets:
-      - consul_sonarr
-      - consul_radarr
-      - consul_jackett
-      - consul_plex
-      - consul_portainer
-      - consul_qbittorrent
-      - consul_unifi
-    ports: 
-      - "53:53/udp"
-      - "8500:8500"
-    command: 
-      - agent 
-      - -dev
-      - -client=0.0.0.0
-      - -dns-port=53
-      - -recursor=8.8.8.8
-      - -recursor=8.8.4.4
-      - -domain=lan
-      - -config-dir=/run/secrets
-      - -config-format=json
-    network_mode: host
-
-  #pihole:
-  #  image: pihole/pihole
-  #  <<: *default-logging
-  #  deploy:
-  #    <<: *default-single-replica-deploy
-  #  environment: [TZ=America/Toronto]
-  #  dns: [127.0.0.1]
-  #  volumes:
-  #    - ./pihole/config:/etc/pihole/
-  #    - ./pihole/dnsmasq:/etc/dnsmasq.d/
-  #  ports: 
-  #    - "53:53/tcp"
-  #    - "53:53/udp"
-  #    - "67:67/udp"
-  #    - "8011:80/tcp"
-  #    - "4431:443/tcp"
-  #  networks: [pihole-net]
-
+    ports: ["53:53/udp"]
+    command: -d --address=/lan/10.0.0.15
 
 networks:
-  port-net:
-  shepherd-net:
-  smb-net:
-  unifi-net:
-  pihole-net:
-  qb-sonarr-net:
-  qb-radarr-net:
-  jackett-sonarr-net:
-  jackett-radarr-net:
-  traefik-port-net:
-  traefik-qb-net:
-  traefik-sonarr-net:
-  traefik-radarr-net:
-  traefik-jackett-net:
-  traefik-plex-net:
-  traefik-unifi-net:
-
-secrets: 
-  consul_sonarr:
-    file: ./consul/sonarr.json
-  consul_radarr:
-    file: ./consul/radarr.json
-  consul_jackett:
-    file: ./consul/jackett.json
-  consul_plex:
-    file: ./consul/plex.json
-  consul_portainer:
-    file: ./consul/portainer.json
-  consul_qbittorrent:
-    file: ./consul/qbittorrent.json
-  consul_unifi:
-    file: ./consul/unifi.json    
-
+  network:
 
 #volumes:
 #  portainer:
