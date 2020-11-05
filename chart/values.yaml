@@ -1,0 +1,17 @@
+# cert manager stuff
+cloudflareApiToken: xxx
+email: a@a.com
+domain: my.domain.com
+#letsEncryptProduction: true
+
+# applications
+apps:
+  - name: qb
+    image: linuxserver/qbittorrent
+    port: 8080
+  - name: radarr
+    image: linuxserver/radarr
+    port: 7878
+  - name: plex
+    image: linuxserver/plex
+    port: 32400
