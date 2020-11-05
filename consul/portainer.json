@@ -1,9 +1,0 @@
-{
-	"service": {
-		"name": "portainer",
-		"tags": [
-			"portainer"
-		],
-		"port": 80
-	}
-}

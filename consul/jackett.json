@@ -1,9 +1,0 @@
-{
-	"service": {
-		"name": "jackett",
-		"tags": [
-			"jackett"
-		],
-		"port": 80
-	}
-}

@@ -30,7 +30,7 @@ Has one container that exposes the media storage location and the .torrent locat
 ### **shepherd-net**
 A shepherd container automatically updates all the containers' images and removes unused images. Same isolation concept as plex-net.
 ### **port-net**
-A Portainer container and agent service that provides a web based management interface for Docker Swarm. 
+A Portainer container and agent service that provides a web based management interface for Docker Swarm.
 ### **traefik**
 A Traefik service connects to purpse-built networks that have containers with web interfaces and provides a reverse proxy for said interfaces.
 
@@ -48,7 +48,7 @@ plex|http://container_host/plex
 1. Install git and Docker
 2. Clone the repo
 3. Modify `./.env/plex.env`, PLEX_CLAIM and ADVERTISE_IP are unique:
-	- The plex claim token needs to be substituted in the compose file with your own. **These are only valid for 4 minutes.** *([plex.tv/claim](https://plex.tv/claim))*
+	- The plex claim token needs to be substituted with your own. **These are only valid for 4 minutes.** *([plex.tv/claim](https://plex.tv/claim))*
 	- The ADVERTISE_IP ip address should be your container host's IP.
 4. `docker swarm init && docker stack up -c docker-compose.yml homelab`
 
