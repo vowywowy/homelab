@@ -6,26 +6,56 @@ metadata:
   name: {{ .name }}
   labels:
     app: {{ .name }}
-  spec:
-    replicas: 1
-    selector:
-      matchLabels:
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
         app: {{ .name }}
-    template:
-      metadata:
-        labels:
-          app: {{ .name }}
-      spec:
-        containers:
+    spec:
+      {{- if or .sharedVolumes .configVolume }}
+      volumes:
+        {{- if .sharedVolumes }}
+        - name: shared
+          persistentVolumeClaim:
+            claimName: shared
+        {{- end }}
+        {{- if .configVolume }}
         - name: {{ .name }}
-          image: {{ .image }}
-          ports:
-          - containerPort: {{ .port }}
+          persistentVolumeClaim:
+            claimName: {{ .name }}
+        {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ .name }}
+        image: {{ .image }}
+        ports:
+        - containerPort: {{ .port }}
+        {{- if or .sharedVolumes .configVolume }}
+        volumeMounts:
+          {{- if .sharedVolumes }}
+          {{- range .sharedVolumes }}
+          - mountPath: {{ . }}
+            name: shared
+          {{- end }}
+          {{- end }}
+          {{- if .configVolume }}
+          - mountPath: {{ .configVolume }}
+            name: {{ .name }}
+          {{- end }}
+        {{- end }}
+        env:
+        - name: PUID
+          value: 1000
+        - name: GUID
+          value: 1000
         {{- if .env }}
-          env:
         {{- range $key, $val := .env }}
-          - name: {{ $key }}
-            value: {{ $val }}
-        {{ end -}}
-        {{ end -}}
+        - name: {{ $key }}
+          value: {{ $val }}
+        {{- end }}
+        {{- end }}
 {{ end -}}

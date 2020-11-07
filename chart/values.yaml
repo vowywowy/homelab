@@ -5,13 +5,43 @@ domain: my.domain.com
 #letsEncryptProduction: true
 
 # applications
+storageSize: 100Gi
 apps:
   - name: qb
-    image: linuxserver/qbittorrent
+    image: ghcr.io/linuxserver/qbittorrent
     port: 8080
+    configStorageSize: 100Mi
+    configVolume: /config
+    sharedVolumes:
+    - /downloads
   - name: radarr
-    image: linuxserver/radarr
+    image: ghcr.io/linuxserver/radarr
     port: 7878
+    configStorageSize: 100Mi
+    configVolume: /config
+    sharedVolumes:
+    - /downloads
+    - /movies
+  - name: sonarr
+    image: ghcr.io/linuxserver/sonarr
+    port: 7878
+    configStorageSize: 100Mi
+    configVolume: /config
+    sharedVolumes:
+    - /downloads
+    - /tv
+  - name: jackett
+    image: ghcr.io/linuxserver/jackett
+    port: 9117
+    configStorageSize: 100Mi
+    configVolume: /config
   - name: plex
-    image: linuxserver/plex
+    image: ghcr.io/linuxserver/plex
     port: 32400
+    configStorageSize: 2Gi
+    configVolume: /config
+    sharedVolumes:
+    - /tv
+    - /movies
+    env:
+      VERSION: public

@@ -4,6 +4,8 @@
         - Zone - Zone - Read
     - Zone Resources:
         - Include - All Zones
+- install traefik as an ingress controller
+- install a storage class of your choice
 - install cert-manager via helm
 ```sh
 helm install cert-manager jetstack/cert-manager \
@@ -11,4 +13,10 @@ helm install cert-manager jetstack/cert-manager \
     --set installCRDs=true \
     --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}'
 ```
-- add this repo as a helm chart
+- add this repo as a helm chart and install it
+```sh
+helm repo add homelab https://raw.githubusercontent.com/vowywowy/homelab/master/chart
+helm repo update
+helm install homelab/homelab
+    --set
+```
