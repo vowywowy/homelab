@@ -4,8 +4,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .name }}
-  spec:
-    selector: {{ .name }}
+spec:
+  selector:
+    app: {{ .name }}
   ports:
     - port: {{ .port }}
       name: {{ .name }}
