@@ -4,6 +4,10 @@ Expand the name of the chart.
 {{- define "homelab.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
+{{- define "homelab.nameaa" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
 
 {{/*
 Create a default fully qualified app name.
