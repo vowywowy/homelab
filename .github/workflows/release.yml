@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+inputs:
+  charts_dir: ./
+
 jobs:
   release:
     runs-on: ubuntu-latest
