@@ -1,14 +1,49 @@
+{{- define "homelab.qbittorrent.port" -}}
+8080
+{{- end -}}
+{{- define "homelab.radarr.port" -}}
+7878
+{{- end -}}
+{{- define "homelab.sonarr.port" -}}
+8989
+{{- end -}}
+{{- define "homelab.jackett.port" -}}
+9117
+{{- end -}}
+{{- define "homelab.plex.port" -}}
+32400
+{{- end -}}
+
+{{- define "homelab.qbittorrent.configSize" -}}
+100Mi
+{{- end -}}
+{{- define "homelab.radarr.configSize" -}}
+100Mi
+{{- end -}}
+{{- define "homelab.sonarr.configSize" -}}
+100Mi
+{{- end -}}
+{{- define "homelab.jackett.configSize" -}}
+100Mi
+{{- end -}}
+{{- define "homelab.plex.configSize" -}}
+2Gi
+{{- end -}}
+
+
+
 {{/*
 Expand the name of the chart.
 */}}
+
+{{/* Generate port list for apps */}}
+#{{- range $key, $value := .Values.apps }}
+#{{- end}}
+
+
 {{- define "homelab.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
-{{- define "homelab.nameaa" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).

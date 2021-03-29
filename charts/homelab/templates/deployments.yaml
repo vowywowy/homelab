@@ -1,61 +1,47 @@
-{{- range .Values.apps }}
+{{- range $key, $value := .Values.apps }}
+{{ if $value.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .name }}
+  name: {{ $key }}
   labels:
-    app: {{ .name }}
+    app: {{ $key }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .name }}
+      app: {{ $key }}
   template:
     metadata:
       labels:
-        app: {{ .name }}
+        app: {{ $key }}
     spec:
-      {{- if or .sharedVolumes .configVolume }}
+      {{- if $value.configPersistence.enabled }}
       volumes:
-        {{- if .sharedVolumes }}
-        - name: shared
-          persistentVolumeClaim:
-            claimName: shared
-        {{- end }}
-        {{- if .configVolume }}
-        - name: {{ .name }}
-          persistentVolumeClaim:
-            claimName: {{ .name }}
-        {{- end }}
+      - name: {{ $key }}
+        persistentVolumeClaim:
+          claimName: {{ $key }}
       {{- end }}
       containers:
-      - name: {{ .name }}
-        image: {{ .image }}
+      - name: {{ $key }}
+        image: {{ printf "%v:%v" $value.image.repository $value.image.tag }}
+        imagePullPolicy: {{ $value.image.pullPolicy }}
         ports:
-        - containerPort: {{ .port }}
-        {{- if or .sharedVolumes .configVolume }}
+        - containerPort: {{ include (printf "homelab.%v.port" $key) . }}
+        {{- if $value.configPersistence.enabled }}
         volumeMounts:
-          {{- if .sharedVolumes }}
-          {{- range .sharedVolumes }}
-          - mountPath: {{ . }}
-            name: shared
-          {{- end }}
-          {{- end }}
-          {{- if .configVolume }}
-          - mountPath: {{ .configVolume }}
-            name: {{ .name }}
-          {{- end }}
+        - mountPath: "/config"
+          name: {{ $key }}
         {{- end }}
         env:
         - name: PUID
-          value: "1000"
+          value: 1000
         - name: GUID
-          value: "1000"
-        {{- if .env }}
-        {{- range $key, $val := .env }}
-        - name: {{ $key }}
-          value: {{ $val }}
+          value: 1000
+        {{- if eq $key "plex" }}
+        - name: VERSION
+          value: public
         {{- end }}
-        {{- end }}
-{{ end -}}
+{{ end }}
+{{ end }}

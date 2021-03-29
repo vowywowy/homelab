@@ -1,47 +1,137 @@
-# cert manager stuff
-cloudflareApiToken: xxx
-email: a@a.com
-domain: my.domain.com
-#letsEncryptProduction: true
+## applications
+#storageSize: 100Gi
+#apps:
+#  - name: qb
+#    image: ghcr.io/linuxserver/qbittorrent
+#    port: 8080
+#    configStorageSize: 100Mi
+#    configVolume: /config
+#    sharedVolumes:
+#    - /downloads
+#  - name: radarr
+#    image: ghcr.io/linuxserver/radarr
+#    port: 7878
+#    configStorageSize: 100Mi
+#    configVolume: /config
+#    sharedVolumes:
+#    - /downloads
+#    - /movies
+#  - name: sonarr
+#    image: ghcr.io/linuxserver/sonarr
+#    port: 7878
+#    configStorageSize: 100Mi
+#    configVolume: /config
+#    sharedVolumes:
+#    - /downloads
+#    - /tv
+#  - name: jackett
+#    image: ghcr.io/linuxserver/jackett
+#    port: 9117
+#    configStorageSize: 100Mi
+#    configVolume: /config
+#  - name: plex
+#    image: ghcr.io/linuxserver/plex
+#    port: 32400
+#    configStorageSize: 2Gi
+#    configVolume: /config
+#    sharedVolumes:
+#    - /tv
+#    - /movies
+#    env:
+#      VERSION: public
 
-# applications
-storageSize: 100Gi
+---
+# LetEncrypt details
+letsEncrypt:
+    # The email to recieve LetsEncrypt alerts
+    email:
+    # If you want to use production or staging
+    production: false
+
+# Cloudflare details
+cloudflare:
+    # The email for associated with the Cloudflare API key
+    email:
+    # The Cloudflare API key
+    apiKey:
+
+# The wildcard domain
+domain:
+
+# The apps to be deployed
 apps:
-  - name: qb
-    image: ghcr.io/linuxserver/qbittorrent
-    port: 8080
-    configStorageSize: 100Mi
-    configVolume: /config
-    sharedVolumes:
-    - /downloads
-  - name: radarr
-    image: ghcr.io/linuxserver/radarr
-    port: 7878
-    configStorageSize: 100Mi
-    configVolume: /config
-    sharedVolumes:
-    - /downloads
-    - /movies
-  - name: sonarr
-    image: ghcr.io/linuxserver/sonarr
-    port: 7878
-    configStorageSize: 100Mi
-    configVolume: /config
-    sharedVolumes:
-    - /downloads
-    - /tv
-  - name: jackett
-    image: ghcr.io/linuxserver/jackett
-    port: 9117
-    configStorageSize: 100Mi
-    configVolume: /config
-  - name: plex
-    image: ghcr.io/linuxserver/plex
-    port: 32400
-    configStorageSize: 2Gi
-    configVolume: /config
-    sharedVolumes:
-    - /tv
-    - /movies
-    env:
-      VERSION: public
+  # Torrent client
+  qbittorrent:
+    # If qBittorrent should be enabled
+    enabled: true
+    # The image location for qBittorrent
+    image:
+      repository: ghcr.io/linuxserver/qbittorrent
+      tag: latest
+      pullPolicy: IfNotPresent
+    # PVC for qBittorrent's configuration
+    configPersistence:
+      # If a PVC should be used for qBittorrent's configuration
+      enabled: true
+      # The size of the PVC for qBittorrent's configuration
+      size: 100Mi
+  # Automatic TV show downloader
+  radarr:
+    # If Radarr should be enabled
+    enabled: true
+    # The image location for Radarr
+    image:
+      repository: ghcr.io/linuxserver/radarr
+      tag: latest
+      pullPolicy: IfNotPresent
+    # PVC for Radarr's configuration
+    configPersistence:
+      # If a PVC should be used for Radarr's configuration
+      enabled: true
+      # The size of the PVC for Radarr's configuration
+      size: 100Mi
+  # Automatic movie downloader
+  sonarr:
+    # If Sonarr should be enabled
+    enabled: true
+    # The image location for Sonarr
+    image:
+      repository: ghcr.io/linuxserver/sonarr
+      tag: latest
+      pullPolicy: IfNotPresent
+    # PVC for Sonarr's configuration
+    configPersistence:
+      # If a PVC should be used for Sonarr's configuration
+      enabled: true
+      # The size of the PVC for Sonarr's configuration
+      size: 100Mi
+  # Torrent tracker aggregator
+  jackett:
+    # If Jackett should be enabled
+    enabled: true
+    # The image location for Jackett
+    image:
+      repository: ghcr.io/linuxserver/jackett
+      tag: latest
+      pullPolicy: IfNotPresent
+    # PVC for Jackett's configuration
+    configPersistence:
+      # If a PVC should be used for Jackett's configuration
+      enabled: true
+      # The size of the PVC for Jackett's configuration
+      size: 100Mi
+  # Media streaming server
+  plex:
+    # If Plex should be enabled
+    enabled: true
+    # The image location for Plex
+    image:
+      repository: ghcr.io/linuxserver/plex
+      tag: latest
+      pullPolicy: IfNotPresent
+    # PVC for Plex's configuration
+    configPersistence:
+      # If a PVC should be used for Plex's configuration
+      enabled: true
+      # The size of the PVC for Plex's configuration
+      size: 2Gi

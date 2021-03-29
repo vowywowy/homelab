@@ -3,26 +3,27 @@ kind: Ingress
 metadata:
   name: ingress
   annotations:
-    kubernetes.io/ingress.class: "traefik"
     cert-manager.io/cluster-issuer: letsencrypt
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/ssl-temporary-redirect: "true"
 spec:
   tls:
-    - secretName: wildcard-tls
-      hosts:
-      - "{{ .Values.domain }}"
-      - "*.{{ .Values.domain }}"
+  - secretName: wildcard-tls
+    hosts:
+    - "{{ .Values.domain }}"
+    - "*.{{ .Values.domain }}"
   rules:
-  {{- range .Values.apps }}
-    - host: {{ .name }}.{{ $.Values.domain }}
-      http:
-        paths:
-        - path: "/"
-          pathType: Prefix
-          backend:
-            service:
-              name: {{ .name }}
-              port:
-                name: {{ .name }}
+  {{- range $key, $value := .Values.apps }}
+  {{- if $value.enabled }}
+  - host: {{ printf "%v.%v" $key $.Values.domain }}
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ $key }}
+            port:
+              name: {{ $key }}
+  {{- end -}}
   {{ end -}}

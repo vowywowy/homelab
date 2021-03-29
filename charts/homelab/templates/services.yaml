@@ -1,13 +1,15 @@
-{{- range .Values.apps }}
+{{- range $key, $value := .Values.apps }}
+{{ if $value.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .name }}
+  name: {{ $key }}
 spec:
   selector:
-    app: {{ .name }}
+    app: {{ $key }}
   ports:
-    - port: {{ .port }}
-      name: {{ .name }}
-{{ end -}}
+    - port: {{ include (printf "homelab.%v.port" $key) . }}
+      name: {{ $key }}
+{{ end }}
+{{ end }}
