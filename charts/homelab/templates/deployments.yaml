@@ -17,28 +17,24 @@ spec:
       labels:
         app: {{ $key }}
     spec:
-      {{- if $value.configPersistence.enabled }}
       volumes:
       - name: {{ $key }}
         persistentVolumeClaim:
           claimName: {{ $key }}
-      {{- end }}
       containers:
       - name: {{ $key }}
         image: {{ printf "%v:%v" $value.image.repository $value.image.tag }}
         imagePullPolicy: {{ $value.image.pullPolicy }}
         ports:
         - containerPort: {{ include (printf "homelab.%v.port" $key) . }}
-        {{- if $value.configPersistence.enabled }}
         volumeMounts:
-        - mountPath: "/config"
-          name: {{ $key }}
-        {{- end }}
+        - name: {{ $key }}
+          mountPath: /config
         env:
         - name: PUID
-          value: 1000
+          value: "1000"
         - name: GUID
-          value: 1000
+          value: "1000"
         {{- if eq $key "plex" }}
         - name: VERSION
           value: public

@@ -1,0 +1,29 @@
+{{ $app := "sonarr" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%v-init" $app }}
+data:
+  init.sh: |
+    #!/bin/bash
+    set -euo pipefail
+    while [ ! -f /config/sonarr.db ]; do
+      echo "Waiting for Sonnar database to exist..."
+      sleep 1;
+    done;
+    echo "Database found!"
+    echo "Adding download client..."
+    sqlite3 -csv /config/sonnar.db '.import /tmp/init/downloadClients.csv DownloadClients'
+  downloadClients.csv: |
+    Id,Enable,Name,Implementation,Settings,ConfigContract,Priority
+    1,1,qbittorrent,QBittorrent,"{
+      ""host"": ""qbittorrent"",
+      ""port"": 8080,
+      ""useSsl"": false,
+      ""username"": ""admin"",
+      ""password"": ""adminadmin"",
+      ""tvCategory"": ""tv-sonarr"",
+      ""recentTvPriority"": 0,
+      ""olderTvPriority"": 0,
+      ""initialState"": 0
+    }",QBittorrentSettings,1

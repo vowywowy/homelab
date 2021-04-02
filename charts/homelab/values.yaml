@@ -71,8 +71,6 @@ apps:
       pullPolicy: IfNotPresent
     # PVC for qBittorrent's configuration
     configPersistence:
-      # If a PVC should be used for qBittorrent's configuration
-      enabled: true
       # The size of the PVC for qBittorrent's configuration
       size: 100Mi
   # Automatic TV show downloader
@@ -86,8 +84,6 @@ apps:
       pullPolicy: IfNotPresent
     # PVC for Radarr's configuration
     configPersistence:
-      # If a PVC should be used for Radarr's configuration
-      enabled: true
       # The size of the PVC for Radarr's configuration
       size: 100Mi
   # Automatic movie downloader
@@ -101,8 +97,6 @@ apps:
       pullPolicy: IfNotPresent
     # PVC for Sonarr's configuration
     configPersistence:
-      # If a PVC should be used for Sonarr's configuration
-      enabled: true
       # The size of the PVC for Sonarr's configuration
       size: 100Mi
   # Torrent tracker aggregator
@@ -116,8 +110,6 @@ apps:
       pullPolicy: IfNotPresent
     # PVC for Jackett's configuration
     configPersistence:
-      # If a PVC should be used for Jackett's configuration
-      enabled: true
       # The size of the PVC for Jackett's configuration
       size: 100Mi
   # Media streaming server
@@ -131,7 +123,5 @@ apps:
       pullPolicy: IfNotPresent
     # PVC for Plex's configuration
     configPersistence:
-      # If a PVC should be used for Plex's configuration
-      enabled: true
       # The size of the PVC for Plex's configuration
       size: 2Gi
