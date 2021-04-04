@@ -1,12 +1,14 @@
 # Requirements
 - An ingress controller - here is nginx as an example:
 ```sh
-helm install ingress-nginx nginx-stable/nginx-ingress \
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install ingress-nginx ingress-nginx/ingress-nginx \
     --namespace ingress-nginx \
     --create-namespace
 ```
 - cert-manager
 ```sh
+helm repo add jetstack https://charts.jetstack.io
 helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
     --create-namespace \

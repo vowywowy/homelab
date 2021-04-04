@@ -1,0 +1,60 @@
+{{- range $key, $value := .Values.apps }}
+{{ if or (eq $key "sonarr") (eq $key "radarr") (eq $key "qbittorrent")}}
+{{ if $value.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $key }}
+spec:
+  template:
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ $key }}
+      volumes:
+      - name: {{ printf "%v-init" $key }}
+        configMap:
+          name: {{ printf "%v-init" $key }}
+          defaultMode: 493
+      {{- if or (eq $key "sonarr") (eq $key "radarr") }}
+      - name: {{ $key }}
+        persistentVolumeClaim:
+          claimName: {{ $key }}
+      {{- end }}
+      containers:
+      - name: {{ printf "%v-job" $key }}
+        image: {{ printf "%v:%v" $value.image.repository $value.image.tag }}
+        command: ["/tmp/init/init.sh"]
+        {{- if eq $key "qbittorrent"}}
+        env:
+        - name: WEB_UI_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ $key }}
+              key: username
+        - name: WEB_UI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ $key }}
+              key: password
+        {{- end }}
+        volumeMounts:
+        {{- if or (eq $key "sonarr") (eq $key "radarr") }}
+        - name: {{ $key }}
+          mountPath: /config
+        {{- end }}
+        - name: {{ printf "%v-init" $key }}
+          mountPath: /tmp/init
+      restartPolicy: Never
+  backoffLimit: 4
+{{ end }}
+{{ end }}
+{{ end }}

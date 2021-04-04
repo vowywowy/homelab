@@ -73,6 +73,8 @@ apps:
     configPersistence:
       # The size of the PVC for qBittorrent's configuration
       size: 100Mi
+    username: admin
+    password: adminadmin
   # Automatic TV show downloader
   radarr:
     # If Radarr should be enabled

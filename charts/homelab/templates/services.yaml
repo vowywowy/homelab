@@ -9,7 +9,7 @@ spec:
   selector:
     app: {{ $key }}
   ports:
-    - port: {{ include (printf "homelab.%v.port" $key) . }}
-      name: {{ $key }}
+  - name: {{ $key }}
+    port: {{ include (printf "homelab.%v.port" $key) . }}
 {{ end }}
 {{ end }}
