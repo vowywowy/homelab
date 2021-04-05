@@ -1,4 +1,5 @@
 {{- range $key, $value := .Values.apps }}
+{{ if $.Values.apps.qbittorrent.enabled }} # qbittorrent must be enabled for init
 {{ if or (eq $key "sonarr") (eq $key "radarr") (eq $key "qbittorrent")}}
 {{ if $value.enabled }}
 ---
@@ -28,6 +29,12 @@ spec:
       - name: {{ $key }}
         persistentVolumeClaim:
           claimName: {{ $key }}
+      - name: {{ printf "%v-init-secret" $key }}
+        secret:
+          secretName: {{ printf "%v-init-secret" $key }}
+          items:
+          - key: downloadClients.csv
+            path: downloadClients.csv
       {{- end }}
       containers:
       - name: {{ printf "%v-job" $key }}
@@ -38,23 +45,26 @@ spec:
         - name: WEB_UI_USERNAME
           valueFrom:
             secretKeyRef:
-              name: {{ $key }}
+              name: {{ printf "%v-init-secret" $key }}
               key: username
         - name: WEB_UI_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ $key }}
+              name: {{ printf "%v-init-secret" $key }}
               key: password
         {{- end }}
         volumeMounts:
         {{- if or (eq $key "sonarr") (eq $key "radarr") }}
         - name: {{ $key }}
           mountPath: /config
+        - name: {{ printf "%v-init-secret" $key }}
+          mountPath: /tmp/init-secret
         {{- end }}
         - name: {{ printf "%v-init" $key }}
           mountPath: /tmp/init
       restartPolicy: Never
   backoffLimit: 4
+{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}
