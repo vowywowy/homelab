@@ -29,36 +29,15 @@ spec:
       - name: {{ $key }}
         persistentVolumeClaim:
           claimName: {{ $key }}
-      - name: {{ printf "%v-init-secret" $key }}
-        secret:
-          secretName: {{ printf "%v-init-secret" $key }}
-          items:
-          - key: downloadClients.csv
-            path: downloadClients.csv
       {{- end }}
       containers:
       - name: {{ printf "%v-job" $key }}
         image: {{ printf "%v:%v" $value.image.repository $value.image.tag }}
         command: ["/tmp/init/init.sh"]
-        {{- if eq $key "qbittorrent"}}
-        env:
-        - name: WEB_UI_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: {{ printf "%v-init-secret" $key }}
-              key: username
-        - name: WEB_UI_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ printf "%v-init-secret" $key }}
-              key: password
-        {{- end }}
         volumeMounts:
         {{- if or (eq $key "sonarr") (eq $key "radarr") }}
         - name: {{ $key }}
           mountPath: /config
-        - name: {{ printf "%v-init-secret" $key }}
-          mountPath: /tmp/init-secret
         {{- end }}
         - name: {{ printf "%v-init" $key }}
           mountPath: /tmp/init

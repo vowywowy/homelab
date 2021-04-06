@@ -1,5 +1,5 @@
 {{- range $key, $value := .Values.apps }}
-{{ if $.Values.apps.qbittorrent.enabled }} # qbittorrent must be enabled for init
+{{ if $.Values.apps.qbittorrent.enabled }}
 {{ if $value.enabled }}
 {{ if or (eq $key "sonarr") (eq $key "radarr") (eq $key "qbittorrent")}}
 ---
@@ -19,7 +19,7 @@ data:
     done;
     echo "Database found!"
     echo "Adding download client..."
-    sqlite3 -csv /config/{{ $key }}.db '.import /tmp/init-secret/downloadClients.csv DownloadClients'
+    sqlite3 -csv /config/{{ $key }}.db '.import /tmp/init/downloadClients.csv DownloadClients'
     {{- end }}
 
     {{- if eq $key "qbittorrent" }}
@@ -30,8 +30,29 @@ data:
     echo "API is ready!"
     echo "Changing settings..."
     curl -so /dev/null -c cookies "http://qbittorrent:8080/api/v2/auth/login?username=admin&password=adminadmin"
-    curl -so /dev/null -c cookies -b cookies "http://qbittorrent:8080/api/v2/app/setPreferences?json=\{\"web_ui_username\":\"${WEB_UI_USERNAME}\",\"web_ui_password\":\"${WEB_UI_PASSWORD}\"\}"
+    curl -so /dev/null -c cookies -b cookies "http://qbittorrent:8080/api/v2/app/setPreferences?json=\{\"bypass_auth_subnet_whitelist_enabled\":true,\"bypass_auth_subnet_whitelist\":\"0.0.0.0/0\"\}"
     {{- end}}
+{{- if or (eq $key "sonarr") (eq $key "radarr") }}
+  downloadClients.csv: |
+    Id,Enable,Name,Implementation,Settings,ConfigContract,Priority
+    1,1,qbittorrent,QBittorrent,"{
+      ""host"": ""qbittorrent"",
+      ""port"": 8080,
+      ""useSsl"": false,
+      ""username"": """",
+      ""password"": """",
+      {{- if eq $key "sonarr" }}
+      ""tvCategory"": ""{{ $key }}"",
+      ""recentTvPriority"": 0,
+      ""olderTvPriority"": 0,
+      {{- else }}
+      ""movieCategory"": ""{{ $key }}"",
+      ""recentMoviePriority"": 0,
+      ""olderMoviePriority"": 0,
+      {{- end }}
+      ""initialState"": 0
+    }",QBittorrentSettings,1
+{{- end }}
 {{ end }}
 {{ end }}
 {{ end }}

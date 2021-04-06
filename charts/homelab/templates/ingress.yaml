@@ -6,6 +6,11 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/ssl-temporary-redirect: "true"
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Content-Security-Policy: img-src 'self' blob: data:";
 spec:
   tls:
   - secretName: wildcard-tls
@@ -14,7 +19,7 @@ spec:
     - "*.{{ .Values.domain }}"
   rules:
   {{- range $key, $value := .Values.apps }}
-  {{- if $value.enabled }}
+  {{- if and $value.enabled (ne $key "oauth2-proxy") }}
   - host: {{ printf "%v.%v" $key $.Values.domain }}
     http:
       paths:
@@ -25,5 +30,31 @@ spec:
             name: {{ $key }}
             port:
               name: {{ $key }}
+  {{- end -}}
+  {{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+spec:
+  tls:
+  - secretName: wildcard-tls
+    hosts:
+    - "{{ .Values.domain }}"
+    - "*.{{ .Values.domain }}"
+  rules:
+  {{- range $key, $value := .Values.apps }}
+  {{- if and $value.enabled (ne $key "oauth2-proxy") }}
+  - host: {{ printf "%v.%v" $key $.Values.domain }}
+    http:
+      paths:
+      - path: /oauth2
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy
+            port:
+              name: oauth2-proxy
   {{- end -}}
   {{ end -}}

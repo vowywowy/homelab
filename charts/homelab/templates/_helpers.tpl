@@ -13,6 +13,9 @@
 {{- define "homelab.plex.port" -}}
 32400
 {{- end -}}
+{{- define "homelab.oauth2-proxy.port" -}}
+4180
+{{- end -}}
 
 {{- define "homelab.qbittorrent.configSize" -}}
 100Mi

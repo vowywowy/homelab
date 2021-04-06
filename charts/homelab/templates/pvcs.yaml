@@ -1,5 +1,5 @@
 {{- range $key, $value := .Values.apps }}
-{{ if $value.enabled }}
+{{ if and $value.enabled (ne $key "oauth2-proxy") }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

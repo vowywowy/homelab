@@ -55,6 +55,15 @@ cloudflare:
     # The Cloudflare API key
     apiKey:
 
+# Oauth details
+oauth:
+  # The oauth2 client ID
+  clientID:
+  # The oauth2 client secret
+  clientSecret:
+  # The oauth2 cookie secret
+  cookieSecret:
+
 # The wildcard domain
 domain:
 
@@ -73,8 +82,8 @@ apps:
     configPersistence:
       # The size of the PVC for qBittorrent's configuration
       size: 100Mi
-    username: admin
-    password: adminadmin
+    username:
+    password:
   # Automatic TV show downloader
   radarr:
     # If Radarr should be enabled
@@ -127,3 +136,12 @@ apps:
     configPersistence:
       # The size of the PVC for Plex's configuration
       size: 2Gi
+  # Oauth2 authentication proxy
+  oauth2-proxy:
+    # If oauth2-proxy should be enabled
+    enabled: true
+    # The image location for oauth2-proxy
+    image:
+      repository: quay.io/oauth2-proxy/oauth2-proxy
+      tag: latest
+      pullPolicy: IfNotPresent

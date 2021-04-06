@@ -1,5 +1,5 @@
 {{- range $key, $value := .Values.apps }}
-{{ if $value.enabled }}
+{{ if and $value.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -17,19 +17,25 @@ spec:
       labels:
         app: {{ $key }}
     spec:
-      volumes:
-      - name: {{ $key }}
-        persistentVolumeClaim:
-          claimName: {{ $key }}
       containers:
       - name: {{ $key }}
         image: {{ printf "%v:%v" $value.image.repository $value.image.tag }}
         imagePullPolicy: {{ $value.image.pullPolicy }}
         ports:
         - containerPort: {{ include (printf "homelab.%v.port" $key) . }}
-        volumeMounts:
-        - name: {{ $key }}
-          mountPath: /config
+      {{- if eq $key "oauth2-proxy" }}
+        args:
+        - --provider=github
+        - --email-domain=*
+        - --upstream=file:///dev/null
+        - --http-address=0.0.0.0:4180
+        - --whitelist-domain=.{{ $.Values.domain }}
+        - --cookie-domain=.{{ $.Values.domain }}
+        envFrom:
+        - secretRef:
+            name: {{ $key }}
+      {{- end }}
+      {{- if ne $key "oauth2-proxy" }}
         env:
         - name: PUID
           value: "1000"
@@ -39,5 +45,13 @@ spec:
         - name: VERSION
           value: public
         {{- end }}
+        volumeMounts:
+        - name: {{ $key }}
+          mountPath: /config
+      volumes:
+      - name: {{ $key }}
+        persistentVolumeClaim:
+          claimName: {{ $key }}
+      {{- end }}
 {{ end }}
 {{ end }}
