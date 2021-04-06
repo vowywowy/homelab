@@ -23,7 +23,7 @@ spec:
         imagePullPolicy: {{ $value.image.pullPolicy }}
         ports:
         - containerPort: {{ include (printf "homelab.%v.port" $key) . }}
-      {{- if eq $key "oauth2-proxy" }}
+      {{- if eq $key "oauth2Proxy" }}
         args:
         - --provider=github
         - --email-domain=*
@@ -35,7 +35,7 @@ spec:
         - secretRef:
             name: {{ $key }}
       {{- end }}
-      {{- if ne $key "oauth2-proxy" }}
+      {{- if ne $key "oauth2Proxy" }}
         env:
         - name: PUID
           value: "1000"

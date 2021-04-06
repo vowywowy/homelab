@@ -13,7 +13,7 @@
 {{- define "homelab.plex.port" -}}
 32400
 {{- end -}}
-{{- define "homelab.oauth2-proxy.port" -}}
+{{- define "homelab.oauth2Proxy.port" -}}
 4180
 {{- end -}}
 

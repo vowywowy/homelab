@@ -137,10 +137,10 @@ apps:
       # The size of the PVC for Plex's configuration
       size: 2Gi
   # Oauth2 authentication proxy
-  oauth2-proxy:
-    # If oauth2-proxy should be enabled
+  oauth2Proxy:
+    # If oauth2Proxy should be enabled
     enabled: true
-    # The image location for oauth2-proxy
+    # The image location for oauth2Proxy
     image:
       repository: quay.io/oauth2-proxy/oauth2-proxy
       tag: latest
