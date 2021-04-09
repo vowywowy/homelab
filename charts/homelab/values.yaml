@@ -55,15 +55,6 @@ cloudflare:
     # The Cloudflare API key
     apiKey:
 
-# Oauth details
-oauth:
-  # The oauth2 client ID
-  clientID:
-  # The oauth2 client secret
-  clientSecret:
-  # The oauth2 cookie secret
-  cookieSecret:
-
 # The wildcard domain
 domain:
 
@@ -145,3 +136,14 @@ apps:
       repository: quay.io/oauth2-proxy/oauth2-proxy
       tag: latest
       pullPolicy: IfNotPresent
+    # The GitHub usernames that can login
+    users:
+    - user1
+    - user2
+    - userb
+    # Oauth details
+    secret:
+      # The oauth2 client ID
+      clientID:
+      # The oauth2 client secret
+      clientSecret:

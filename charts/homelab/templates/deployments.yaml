@@ -31,6 +31,7 @@ spec:
         - --http-address=0.0.0.0:4180
         - --whitelist-domain=.{{ $.Values.domain }}
         - --cookie-domain=.{{ $.Values.domain }}
+        - --github-users="{{ join "," $value.users }}"
         envFrom:
         - secretRef:
             name: {{ $key }}
