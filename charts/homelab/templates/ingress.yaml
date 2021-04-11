@@ -6,7 +6,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/ssl-temporary-redirect: "true"
-    {{- if .Values.apps.oauth2Proxy.enabled }}
+    {{- if .Values.apps.oauth2proxy.enabled }}
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
     {{- end }}
@@ -21,7 +21,7 @@ spec:
     - "*.{{ .Values.domain }}"
   rules:
   {{- range $key, $value := .Values.apps }}
-  {{- if and $value.enabled (ne $key "oauth2Proxy") }}
+  {{- if and $value.enabled (ne $key "oauth2proxy") }}
   - host: {{ printf "%v.%v" $key $.Values.domain }}
     http:
       paths:
@@ -38,7 +38,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: oauth2Proxy
+  name: oauth2proxy
 spec:
   tls:
   - secretName: wildcard-tls
@@ -47,16 +47,20 @@ spec:
     - "*.{{ .Values.domain }}"
   rules:
   {{- range $key, $value := .Values.apps }}
-  {{- if and $value.enabled (ne $key "oauth2Proxy") }}
+  {{- if and $value.enabled }}
   - host: {{ printf "%v.%v" $key $.Values.domain }}
     http:
       paths:
+      {{- if eq $key "oauth2proxy" }}
+      - path: /
+      {{- else }}
       - path: /oauth2
+      {{- end }}
         pathType: Prefix
         backend:
           service:
-            name: oauth2Proxy
+            name: oauth2proxy
             port:
-              name: oauth2Proxy
+              name: oauth2proxy
   {{- end -}}
   {{ end -}}

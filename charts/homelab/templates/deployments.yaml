@@ -23,7 +23,7 @@ spec:
         imagePullPolicy: {{ $value.image.pullPolicy }}
         ports:
         - containerPort: {{ include (printf "homelab.%v.port" $key) . }}
-      {{- if eq $key "oauth2Proxy" }}
+      {{- if eq $key "oauth2proxy" }}
         args:
         - --provider=github
         - --email-domain=*
@@ -31,12 +31,12 @@ spec:
         - --http-address=0.0.0.0:4180
         - --whitelist-domain=.{{ $.Values.domain }}
         - --cookie-domain=.{{ $.Values.domain }}
-        - --github-users="{{ join "," $value.users }}"
+        - --github-user="{{ join "," $value.users }}"
         envFrom:
         - secretRef:
             name: {{ $key }}
       {{- end }}
-      {{- if ne $key "oauth2Proxy" }}
+      {{- if ne $key "oauth2proxy" }}
         env:
         - name: PUID
           value: "1000"
@@ -49,10 +49,28 @@ spec:
         volumeMounts:
         - name: {{ $key }}
           mountPath: /config
+        {{- if and $.Values.mediaPersistence.enabled (and (ne $key "plex" ) (ne $key "jackett")) }}
+        - name: {{ $key }}-media
+          mountPath: /downloads
+        {{- end }}
+        {{- if or (eq $key "radarr") (eq $key "plex") }}
+        - name: {{ $key }}-media
+          mountPath: /movies
+        {{- end }}
+        {{- if or (eq $key "sonarr" ) (eq $key "plex")}}
+        - name: {{ $key }}-media
+          mountPath: /tv
+        {{- end }}
       volumes:
       - name: {{ $key }}
         persistentVolumeClaim:
           claimName: {{ $key }}
+      {{- if and $.Values.mediaPersistence.enabled (eq $.Values.mediaPersistence.type "nfs") }}
+      - name: {{ $key }}-media
+        nfs:
+          server: {{ $.Values.mediaPersistence.nfs.server }}
+          path: {{ $.Values.mediaPersistence.nfs.path }}
+      {{- end }}
       {{- end }}
 {{ end }}
 {{ end }}

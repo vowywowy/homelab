@@ -13,7 +13,7 @@
 {{- define "homelab.plex.port" -}}
 32400
 {{- end -}}
-{{- define "homelab.oauth2Proxy.port" -}}
+{{- define "homelab.oauth2proxy.port" -}}
 4180
 {{- end -}}
 
@@ -32,8 +32,6 @@
 {{- define "homelab.plex.configSize" -}}
 2Gi
 {{- end -}}
-
-
 
 {{/*
 Expand the name of the chart.

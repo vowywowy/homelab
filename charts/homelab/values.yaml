@@ -58,6 +58,25 @@ cloudflare:
 # The wildcard domain
 domain:
 
+mediaPersistence:
+  # If persistent media storage should be enabled
+  enabled: true
+  # The storage mount type for your media.
+  # Can be 1 of: hostpath, nfs, pvc
+  # hostPath:
+  #   This mounts a single path on the host
+  # nfs:
+  #   This mounts an NFS location
+  # pvc:
+  #   This creates a kubernetes PVC
+  #
+  #type: nfs
+  #hostPath:
+  #nfs:
+  #  server:
+  #  path:
+  #pvc:
+
 # The apps to be deployed
 apps:
   # Torrent client
@@ -128,10 +147,10 @@ apps:
       # The size of the PVC for Plex's configuration
       size: 2Gi
   # Oauth2 authentication proxy
-  oauth2Proxy:
-    # If oauth2Proxy should be enabled
+  oauth2proxy:
+    # If oauth2proxy should be enabled
     enabled: true
-    # The image location for oauth2Proxy
+    # The image location for oauth2proxy
     image:
       repository: quay.io/oauth2-proxy/oauth2-proxy
       tag: latest
