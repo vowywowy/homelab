@@ -13,46 +13,58 @@ data:
     set -euo pipefail
 
     {{- if or (eq $key "sonarr") (eq $key "radarr") }}
-    while [ ! -f /config/{{ $key }}.db ]; do
-      echo "Waiting for {{ $key }} database to exist..."
+    while [ ! -f /config/config.xml ]; do
+      echo "Waiting for API key to exist..."
       sleep 1;
     done;
-    echo "Database found!"
-    echo "Adding download client..."
-    sqlite3 -csv /config/{{ $key }}.db '.import /tmp/init/downloadClients.csv DownloadClients'
+    echo "API key found!"
+
+    apiKey=$(grep -Po "(?<=<ApiKey>).*?(?=</ApiKey>)" /config/config.xml)
+
+    until [ $(curl -sw '%{http_code}' -o /dev/null "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v3/system/status?apikey=${apiKey}") == "200" ]; do
+      echo "Waiting for {{ $key }} API...";
+      sleep 1;
+    done;
+
+    echo "API is ready!"
+    echo "Adding download client and indexer..."
+    curl -so /dev/null "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v3/downloadclient?apikey=${apiKey}" \
+      {{- if eq $key "sonarr"}}
+      --data-raw '{"enable":true,"protocol":"torrent","priority":1,"name":"qbittorrent","fields":[{"name":"host","value":"qbittorrent"},{"name":"port","value":8080},{"name":"useSsl","value":false},{"name":"urlBase"},{"name":"username"},{"name":"password"},{"name":"tvCategory","value":"tv-sonarr"},{"name":"tvImportedCategory"},{"name":"recentTvPriority","value":0},{"name":"olderTvPriority","value":0},{"name":"initialState","value":0}],"implementationName":"qBittorrent","implementation":"QBittorrent","configContract":"QBittorrentSettings","infoLink":"https://wiki.servarr.com/Sonarr_Supported_DownloadClients","tags":[]}'
+    echo "Download client added!"
+
+     until [ $(curl -w '%{http_code}' -so /dev/null "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v3/indexer?apikey=${apiKey}" \
+      --data-raw '{"enableRss":true,"enableAutomaticSearch":true,"enableInteractiveSearch":true,"supportsRss":true,"supportsSearch":true,"protocol":"torrent","priority":25,"name":"Rarbg","fields":[{"name":"baseUrl","value":"https://torrentapi.org"},{"name":"rankedOnly","value":false},{"name":"captchaToken"},{"name":"minimumSeeders","value":1},{"name":"seedCriteria.seedRatio"},{"name":"seedCriteria.seedTime"},{"name":"seedCriteria.seasonPackSeedTime"}],"implementationName":"Rarbg","implementation":"Rarbg","configContract":"RarbgSettings","infoLink":"https://wiki.servarr.com/Sonarr_Supported_Indexers","tags":[]}') == "201" ]; do
+      echo "Attempting to add indexer..."
+      sleep 1;
+    done;
+    echo "Indexer added!"
+      {{- end }}
+      {{- if eq $key "radarr"}}
+      --data-raw '{"enable":true,"protocol":"torrent","priority":1,"name":"qbittorrent","fields":[{"name":"host","value":"qbittorrent"},{"name":"port","value":8080},{"name":"urlBase"},{"name":"username"},{"name":"password"},{"name":"movieCategory","value":"radarr"},{"name":"movieImportedCategory"},{"name":"recentMoviePriority","value":0},{"name":"olderMoviePriority","value":0},{"name":"initialState","value":0},{"name":"useSsl","value":false}],"implementationName":"qBittorrent","implementation":"QBittorrent","configContract":"QBittorrentSettings","infoLink":"https://wiki.servarr.com/Radarr_Supported_qbittorrent","tags":[]}'
+    echo "Download client added!"
+
+    until [ $(curl -w '%{http_code}' -so /dev/null "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v3/indexer?apikey=${apiKey}" \
+      --data-raw '{"enableRss":true,"enableAutomaticSearch":true,"enableInteractiveSearch":true,"supportsRss":true,"supportsSearch":true,"protocol":"torrent","priority":25,"name":"Rarbg","fields":[{"name":"baseUrl","value":"https://torrentapi.org"},{"name":"rankedOnly","value":false},{"name":"captchaToken"},{"name":"multiLanguages","value":[]},{"name":"minimumSeeders","value":1},{"name":"requiredFlags","value":[]},{"name":"categories","value":[14,48,17,44,45,47,50,51,52,42,46]},{"name":"seedCriteria.seedRatio"},{"name":"seedCriteria.seedTime"}],"implementationName":"Rarbg","implementation":"Rarbg","configContract":"RarbgSettings","infoLink":"https://wiki.servarr.com/Radarr_Supported_rarbg","tags":[]}') == "201" ]; do
+      echo "Attempting to add indexer..."
+      sleep 1;
+    done
+    echo "Indexer added!"
+      {{- end }}
     {{- end }}
 
+
+
     {{- if eq $key "qbittorrent" }}
-    until [ $(curl -sw '%{http_code}' -o /dev/null "http://qbittorrent:8080/api/v2/auth/login?username=admin&password=adminadmin") == "200" ]; do
+    until [ $(curl -sw '%{http_code}' -o /dev/null "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v2/auth/login?username=admin&password=adminadmin") == "200" ]; do
       echo "Waiting for {{ $key }} API...";
       sleep 1;
     done;
     echo "API is ready!"
     echo "Changing settings..."
-    curl -so /dev/null -c cookies "http://qbittorrent:8080/api/v2/auth/login?username=admin&password=adminadmin"
-    curl -so /dev/null -c cookies -b cookies "http://qbittorrent:8080/api/v2/app/setPreferences?json=\{\"bypass_auth_subnet_whitelist_enabled\":true,\"bypass_auth_subnet_whitelist\":\"0.0.0.0/0\"\}"
+    curl -so /dev/null -c cookies "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v2/auth/login?username=admin&password=adminadmin"
+    curl -so /dev/null -c cookies -b cookies "http://{{ $key }}:{{ include (printf "homelab.%v.port" $key) . }}/api/v2/app/setPreferences?json=\{\"bypass_auth_subnet_whitelist_enabled\":true,\"bypass_auth_subnet_whitelist\":\"0.0.0.0/0\"\}"
     {{- end}}
-{{- if or (eq $key "sonarr") (eq $key "radarr") }}
-  downloadClients.csv: |
-    Id,Enable,Name,Implementation,Settings,ConfigContract,Priority
-    1,1,qbittorrent,QBittorrent,"{
-      ""host"": ""qbittorrent"",
-      ""port"": 8080,
-      ""useSsl"": false,
-      ""username"": """",
-      ""password"": """",
-      {{- if eq $key "sonarr" }}
-      ""tvCategory"": ""{{ $key }}"",
-      ""recentTvPriority"": 0,
-      ""olderTvPriority"": 0,
-      {{- else }}
-      ""movieCategory"": ""{{ $key }}"",
-      ""recentMoviePriority"": 0,
-      ""olderMoviePriority"": 0,
-      {{- end }}
-      ""initialState"": 0
-    }",QBittorrentSettings,1
-{{- end }}
 {{ end }}
 {{ end }}
 {{ end }}
