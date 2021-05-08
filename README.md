@@ -24,11 +24,8 @@ helm install cert-manager jetstack/cert-manager \
     - Zone Resources:
         - Include - All Zones
 # Install
-- If
 - Add this repo as a helm chart and install it
 ```sh
 helm repo add homelab https://raw.githubusercontent.com/vowywowy/homelab/master/chart
 helm repo update
-helm install homelab/homelab
-    --set
 ```

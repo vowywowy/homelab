@@ -1,45 +1,3 @@
-## applications
-#storageSize: 100Gi
-#apps:
-#  - name: qb
-#    image: ghcr.io/linuxserver/qbittorrent
-#    port: 8080
-#    configStorageSize: 100Mi
-#    configVolume: /config
-#    sharedVolumes:
-#    - /downloads
-#  - name: radarr
-#    image: ghcr.io/linuxserver/radarr
-#    port: 7878
-#    configStorageSize: 100Mi
-#    configVolume: /config
-#    sharedVolumes:
-#    - /downloads
-#    - /movies
-#  - name: sonarr
-#    image: ghcr.io/linuxserver/sonarr
-#    port: 7878
-#    configStorageSize: 100Mi
-#    configVolume: /config
-#    sharedVolumes:
-#    - /downloads
-#    - /tv
-#  - name: jackett
-#    image: ghcr.io/linuxserver/jackett
-#    port: 9117
-#    configStorageSize: 100Mi
-#    configVolume: /config
-#  - name: plex
-#    image: ghcr.io/linuxserver/plex
-#    port: 32400
-#    configStorageSize: 2Gi
-#    configVolume: /config
-#    sharedVolumes:
-#    - /tv
-#    - /movies
-#    env:
-#      VERSION: public
-
 ---
 # LetEncrypt details
 letsEncrypt:
@@ -63,19 +21,35 @@ mediaPersistence:
   enabled: true
   # The storage mount type for your media.
   # Can be 1 of: hostpath, nfs, pvc
-  # hostPath:
-  #   This mounts a single path on the host
-  # nfs:
-  #   This mounts an NFS location
-  # pvc:
-  #   This creates a kubernetes PVC
+  # hostPath  This mounts a single path on the host
+  #           Specify a path on the host
+  #           Example:
+  #           type: hostPath
+  #           hostPath: /the/path/on/the/host
   #
-  #type: nfs
-  #hostPath:
-  #nfs:
-  #  server:
-  #  path:
-  #pvc:
+  # ---
+  # nfs       This mounts an NFS location
+  #           Specify a server and a path
+  #           Example:
+  #             type: nfs
+  #             nfs:
+  #               server: nfs.hostname.or.ip.com
+  #               path: /the/path/of/the/share
+  #
+  # ---
+  # pvc       This creates a kubernetes PVC
+  #           Specify the storageclass, size, and mode
+  #           The storage class must support RWX or every
+  #           application needs to be on the same node.
+  #           Example:
+  #             type: pvc
+  #               storageClass: blank for default
+  #               size: 500Gi
+  #               mode: ReadWriteMany
+  # ---
+  #
+  # By default everything is in /data/homelab
+  hostPath: /data/homelab
 
 # The apps to be deployed
 apps:

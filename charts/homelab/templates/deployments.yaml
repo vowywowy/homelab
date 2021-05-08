@@ -49,7 +49,7 @@ spec:
         volumeMounts:
         - name: {{ $key }}
           mountPath: /config
-        {{- if and $.Values.mediaPersistence.enabled (and (ne $key "plex" ) (ne $key "jackett")) }}
+        {{- if and $.Values.mediaPersistence.enabled (and (ne $key "plex" ) (ne $key "jackett") (ne $key "oauth2proxy")) }}
         - name: {{ $key }}-media
           mountPath: /downloads
         {{- end }}
@@ -65,11 +65,18 @@ spec:
       - name: {{ $key }}
         persistentVolumeClaim:
           claimName: {{ $key }}
-      {{- if and $.Values.mediaPersistence.enabled (eq $.Values.mediaPersistence.type "nfs") }}
+      {{- if and $.Values.mediaPersistence.enabled (and (ne $key "jackett") (ne $key "oauth2proxy")) }}
       - name: {{ $key }}-media
+      {{- if eq $.Values.mediaPersistence.type "nfs" }}
         nfs:
           server: {{ $.Values.mediaPersistence.nfs.server }}
           path: {{ $.Values.mediaPersistence.nfs.path }}
+      {{- end }}
+      {{- if eq $.Values.mediaPersistence.type "hostPath" }}
+        hostPath:
+          path: {{ $.Values.mediaPersistence.hostPath }}
+          type: DirectoryOrCreate
+      {{- end }}
       {{- end }}
       {{- end }}
 {{ end }}
