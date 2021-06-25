@@ -3,6 +3,16 @@ entries:
   homelab:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2021-06-25T15:03:51.583012896Z"
+    description: A Helm chart for Kubernetes
+    digest: b6414a712bccf5c208e6e1cabffea369a86d0a6f1862264c3037fcdb64344593
+    name: homelab
+    type: application
+    urls:
+    - https://github.com/vowywowy/homelab/releases/download/homelab-1.2.0/homelab-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2021-05-08T17:19:47.857150894Z"
     description: A Helm chart for Kubernetes
     digest: 0d3ca905a39e8fdacf258a3fc75a5971c2eb610d20aed02ebac03bbdd993552c
@@ -41,4 +51,4 @@ entries:
     urls:
     - https://github.com/vowywowy/homelab/releases/download/homelab-1.0.0/homelab-1.0.0.tgz
     version: 1.0.0
-generated: "2021-05-08T17:19:47.857369809Z"
+generated: "2021-06-25T15:03:51.583042596Z"
