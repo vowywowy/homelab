@@ -1,5 +1,5 @@
 {{- range $key, $value := .Values.apps }}
-{{ if $.Values.apps.qbittorrent.enabled }} # qbittorrent must be enabled for init
+{{ if $.Values.apps.qbittorrent.enabled }}
 {{ if or (eq $key "sonarr") (eq $key "radarr") (eq $key "qbittorrent")}}
 {{ if $value.enabled }}
 ---

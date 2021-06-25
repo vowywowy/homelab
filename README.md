@@ -1,5 +1,5 @@
 # Requirements
-- An ingress controller - here is nginx as an example:
+- Nginx ingress controller:
 ```sh
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
@@ -28,4 +28,28 @@ helm install cert-manager jetstack/cert-manager \
 ```sh
 helm repo add homelab https://vowywowy.github.io/homelab/
 helm repo update
+```
+- Read values.yaml and deploy as desired. For example, this exactly what I use for values.yaml
+```yaml
+cloudflare:
+  apiKey: <cf api key>
+  email: <email>
+
+letsEncrypt:
+  email: < email>
+  production: true
+
+domain: app.lan.rip
+
+mediaPersistence:
+  enabled: true
+  type: hostPath
+
+apps:
+  oauth2proxy:
+    users:
+    - vowywowy
+    secret:
+      clientID: <oauth id>
+      clientSecret: <oauth secret>
 ```

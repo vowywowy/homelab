@@ -39,9 +39,9 @@ spec:
       {{- if ne $key "oauth2proxy" }}
         env:
         - name: PUID
-          value: "1000"
+          value: "{{ $.Values.uid }}"
         - name: GUID
-          value: "1000"
+          value: "{{ $.Values.gid }}"
         {{- if eq $key "plex" }}
         - name: VERSION
           value: public
@@ -76,6 +76,17 @@ spec:
         hostPath:
           path: {{ $.Values.mediaPersistence.hostPath }}
           type: DirectoryOrCreate
+      initContainers:
+      - name: hostpath-permission-changer
+        image: busybox
+        command: ["sh", "-c", "chmod -R 777 /tmp/hostpath; chown -R {{ $.Values.uid }}:{{ $.Values.gid }} /tmp/hostpath"]
+        volumeMounts:
+        - name: {{ $key }}-media
+          mountPath: /tmp/hostpath
+      {{- end }}
+      {{- if eq $.Values.mediaPersistence.type "pvc" }}
+        persistentVolumeClaim:
+          claimName: shared-media
       {{- end }}
       {{- end }}
       {{- end }}

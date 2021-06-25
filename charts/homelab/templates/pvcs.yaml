@@ -13,3 +13,19 @@ spec:
       storage: {{ $value.configPersistence.size }}
 {{ end }}
 {{ end }}
+{{- if and (.Values.mediaPersistence.enabled) (eq .Values.mediaPersistence.type "pvc") }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: shared-media
+spec:
+  {{- if .Values.mediaPersistence.pvc.storageClass }}
+  storageClass: {{ .Values.mediaPersistence.pvc.storageClass }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.mediaPersistence.pvc.mode }}
+  resources:
+    requests:
+      storage: {{ .Values.mediaPersistence.pvc.size }}
+{{- end }}

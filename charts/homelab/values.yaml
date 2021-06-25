@@ -43,13 +43,19 @@ mediaPersistence:
   #           application needs to be on the same node.
   #           Example:
   #             type: pvc
+  #             pvc:
   #               storageClass: blank for default
   #               size: 500Gi
   #               mode: ReadWriteMany
   # ---
   #
   # By default everything is in /data/homelab
+  type: hostPath
   hostPath: /data/homelab
+
+# uid/gid for the applications should use to run, this also applies to their storage
+uid: "1000"
+gid: "1000"
 
 # The apps to be deployed
 apps:
